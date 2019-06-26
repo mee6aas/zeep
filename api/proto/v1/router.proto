@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package metro.router.v1;
+package mee6aas.zeep.router.v1;
 
 option go_package = "v1";
 
@@ -9,20 +9,20 @@ service RouterService {
     rpc Send (SendRequest) returns (SendResponse);
 }
  
-message Station {
+message Kyle {
     string id = 1;      // ID of function
     string name = 2;    // Name of function instance
 }
 
 message Message {
-    Station sender = 1;
+    Kyle sender = 1;
     string body = 2;
 }
 
 message ListenRequest {}
 
 message SendRequest {
-    Station destination = 1;
+    Kyle destination = 1;
     string body = 2;
 }
 

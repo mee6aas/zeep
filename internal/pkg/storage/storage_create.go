@@ -7,5 +7,5 @@ type CreateConfig struct {
 
 // CreateCreatedBody OK response to Create operation.
 type CreateCreatedBody struct {
-	Path string // Path of the storage created
+	Path string // Path of the storage
 }
