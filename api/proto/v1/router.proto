@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package metro.router.v1;
+
+option go_package = "v1";
+
+service RouterService {
+    rpc Listen (ListenRequest) returns (stream Message);
+    rpc Send (SendRequest) returns (SendResponse);
+}
+ 
+message Station {
+    string id = 1;      // ID of function
+    string name = 2;    // Name of function instance
+}
+
+message Message {
+    Station sender = 1;
+    string body = 2;
+}
+
+message ListenRequest {}
+
+message SendRequest {
+    Station destination = 1;
+    string body = 2;
+}
+
+message SendResponse {}
