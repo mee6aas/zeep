@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"strconv"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -72,6 +73,32 @@ func Deploy(ctx context.Context, setters ...DeployOption) (res DeployDeployedBod
 		}, nil, "")
 		return e
 	}
+	checkAlive := func() (e error) {
+		c, cc := context.WithTimeout(context.Background(), time.Second*3)
+		defer cc()
+
+		// TODO: Is it right implementation?
+		go func() {
+			select {
+			case <-ctx.Done():
+			case <-c.Done():
+			}
+
+			cc()
+		}()
+
+		if dbClient, e = mongo.Connect(c, options.Client().ApplyURI(dbURI)); err != nil {
+			e = errors.Wrapf(e, "Failed to create mongodb client %s", dbURI)
+			return
+		}
+
+		if e = dbClient.Ping(c, readpref.Primary()); err != nil {
+			e = errors.Wrapf(e, "Failed to find mongodb server at %s", dbURI)
+			return
+		}
+
+		return
+	}
 
 	defer func() {
 		if err == nil {
@@ -87,6 +114,13 @@ func Deploy(ctx context.Context, setters ...DeployOption) (res DeployDeployedBod
 		})
 	}()
 
+	if err = checkAlive(); err == nil {
+		// Already exists
+		// TODO: return error with exists information
+		err = errors.Errorf("Mongo server already exists at %s", dbURI)
+		return
+	}
+
 	if err = create(); err == nil {
 		// no error
 	} else if !docker.IsErrNotFound(err) {
@@ -99,7 +133,6 @@ func Deploy(ctx context.Context, setters ...DeployOption) (res DeployDeployedBod
 		return
 	} else {
 		// image not found but pull allowed
-		// time.Sleep(time.Second * 1)
 		if out, e := engineClient.ImagePull(ctx, img, types.ImagePullOptions{}); e == nil {
 			io.Copy(ioutil.Discard, out)
 			out.Close()
@@ -122,15 +155,8 @@ func Deploy(ctx context.Context, setters ...DeployOption) (res DeployDeployedBod
 		return
 	}
 
-	// time.Sleep(time.Second * 5)
-
-	if dbClient, err = mongo.Connect(ctx, options.Client().ApplyURI(dbURI)); err != nil {
-		err = errors.Wrapf(err, "Failed to create mongodb client %s", dbURI)
-		return
-	}
-
-	if err = dbClient.Ping(ctx, readpref.Primary()); err != nil {
-		err = errors.Wrapf(err, "Failed to find mongodb server at %s", dbURI)
+	if err = checkAlive(); err != nil {
+		err = errors.Wrap(err, "Failed to check alive")
 		return
 	}
 

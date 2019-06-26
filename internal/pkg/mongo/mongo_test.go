@@ -31,6 +31,19 @@ func TestDeploy(t *testing.T) {
 		cancel context.CancelFunc
 	)
 
+	defer func() {
+		if len(res.ContainerID) == 0 {
+			return
+		}
+
+		c, cc := context.WithTimeout(context.Background(), time.Second*3)
+		defer cc()
+
+		testEngineClient.ContainerRemove(c, res.ContainerID, types.ContainerRemoveOptions{
+			Force: true,
+		})
+	}()
+
 	ctx, cancel = context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -54,11 +67,19 @@ func TestDeploy(t *testing.T) {
 		t.Fatalf("Expected to fail to deploy")
 	}
 
-	ctx, cancel = context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	deploy := func() (DeployDeployedBody, error) {
+		c, cc := context.WithTimeout(context.Background(), time.Second*30)
+		defer cc()
 
-	if res, err = Deploy(ctx, WithVersion(testMongoVersion), WithNetwork("host")); err != nil {
+		return Deploy(c, WithVersion(testMongoVersion), WithNetwork("host"))
+	}
+
+	if res, err = deploy(); err != nil {
 		t.Fatalf("Failed to deploy: %v", err)
+	}
+
+	if _, err = deploy(); err == nil {
+		t.Fatalf("Expected to fail to deploy")
 	}
 
 	_ = res
