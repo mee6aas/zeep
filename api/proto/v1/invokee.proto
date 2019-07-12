@@ -1,0 +1,14 @@
+syntax = "proto3";
+package mee6aas.agent.invokee.v1;
+
+option go_package = "v1";
+
+service Invokee {
+    rpc Listen (ListenRequest) returns (stream Task){};
+}
+
+message ListenRequest {}
+
+message Task {
+    string arg = 1;
+}

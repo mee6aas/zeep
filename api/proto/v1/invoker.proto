@@ -1,0 +1,21 @@
+syntax = "proto3";
+package mee6aas.agent.invoker.v1;
+
+option go_package = "v1";
+
+service Invoker {
+    rpc Invoke (InvokeRequest) returns (InvokeResponse){};
+}
+
+message Function {
+    string id = 1;
+    string name = 2;
+}
+
+message InvokeRequest {
+    Function target = 1;
+}
+
+message InvokeResponse {
+    string result = 1;
+}
