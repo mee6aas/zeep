@@ -1,11 +1,14 @@
 package api
 
 const (
-	// KyleStorage is the path of the directory that Kyle use.
-	KyleStorage = "/kyle/"
+	// ActivityStorage is the path of the directory that activity use.
+	ActivityStorage = "/act"
 
-	// WorkflowStorage is the path of the directory shared across workflow.
-	WorkflowStorage = "/kyle/flow/"
+	// ActivityResource is the path of the directory that contains resources activity to run.
+	ActivityResource = "/act/rsc"
+
+	// WorkflowStorage is the path of the directory shared across the workflow.
+	WorkflowStorage = "/flow"
 
 	// DockerAPIVersion is version of Docker client API that Zeep use.
 	DockerAPIVersion = "1.39"

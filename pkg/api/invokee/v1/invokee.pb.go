@@ -56,7 +56,8 @@ func (m *ListenRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_ListenRequest proto.InternalMessageInfo
 
 type Task struct {
-	Arg                  string   `protobuf:"bytes,1,opt,name=arg,proto3" json:"arg,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Arg                  string   `protobuf:"bytes,2,opt,name=arg,proto3" json:"arg,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -87,6 +88,13 @@ func (m *Task) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Task proto.InternalMessageInfo
 
+func (m *Task) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
 func (m *Task) GetArg() string {
 	if m != nil {
 		return m.Arg
@@ -94,24 +102,118 @@ func (m *Task) GetArg() string {
 	return ""
 }
 
+type ReportRequest struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Result               string   `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
+	IsError              bool     `protobuf:"varint,3,opt,name=isError,proto3" json:"isError,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ReportRequest) Reset()         { *m = ReportRequest{} }
+func (m *ReportRequest) String() string { return proto.CompactTextString(m) }
+func (*ReportRequest) ProtoMessage()    {}
+func (*ReportRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6e11f4dbf517a09d, []int{2}
+}
+
+func (m *ReportRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReportRequest.Unmarshal(m, b)
+}
+func (m *ReportRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReportRequest.Marshal(b, m, deterministic)
+}
+func (m *ReportRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReportRequest.Merge(m, src)
+}
+func (m *ReportRequest) XXX_Size() int {
+	return xxx_messageInfo_ReportRequest.Size(m)
+}
+func (m *ReportRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReportRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReportRequest proto.InternalMessageInfo
+
+func (m *ReportRequest) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *ReportRequest) GetResult() string {
+	if m != nil {
+		return m.Result
+	}
+	return ""
+}
+
+func (m *ReportRequest) GetIsError() bool {
+	if m != nil {
+		return m.IsError
+	}
+	return false
+}
+
+type ReportResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ReportResponse) Reset()         { *m = ReportResponse{} }
+func (m *ReportResponse) String() string { return proto.CompactTextString(m) }
+func (*ReportResponse) ProtoMessage()    {}
+func (*ReportResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6e11f4dbf517a09d, []int{3}
+}
+
+func (m *ReportResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReportResponse.Unmarshal(m, b)
+}
+func (m *ReportResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReportResponse.Marshal(b, m, deterministic)
+}
+func (m *ReportResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReportResponse.Merge(m, src)
+}
+func (m *ReportResponse) XXX_Size() int {
+	return xxx_messageInfo_ReportResponse.Size(m)
+}
+func (m *ReportResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReportResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReportResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*ListenRequest)(nil), "mee6aas.agent.invokee.v1.ListenRequest")
 	proto.RegisterType((*Task)(nil), "mee6aas.agent.invokee.v1.Task")
+	proto.RegisterType((*ReportRequest)(nil), "mee6aas.agent.invokee.v1.ReportRequest")
+	proto.RegisterType((*ReportResponse)(nil), "mee6aas.agent.invokee.v1.ReportResponse")
 }
 
 func init() { proto.RegisterFile("invokee.proto", fileDescriptor_6e11f4dbf517a09d) }
 
 var fileDescriptor_6e11f4dbf517a09d = []byte{
-	// 143 bytes of a gzipped FileDescriptorProto
+	// 236 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcd, 0xcc, 0x2b, 0xcb,
 	0xcf, 0x4e, 0x4d, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0xc8, 0x4d, 0x4d, 0x35, 0x4b,
 	0x4c, 0x2c, 0xd6, 0x4b, 0x4c, 0x4f, 0xcd, 0x2b, 0xd1, 0x83, 0x49, 0x96, 0x19, 0x2a, 0xf1, 0x73,
-	0xf1, 0xfa, 0x64, 0x16, 0x97, 0xa4, 0xe6, 0x05, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x28, 0x49,
-	0x70, 0xb1, 0x84, 0x24, 0x16, 0x67, 0x0b, 0x09, 0x70, 0x31, 0x27, 0x16, 0xa5, 0x4b, 0x30, 0x2a,
-	0x30, 0x6a, 0x70, 0x06, 0x81, 0x98, 0x46, 0x09, 0x5c, 0xec, 0x9e, 0x10, 0x8d, 0x42, 0xa1, 0x5c,
-	0x6c, 0x10, 0x5d, 0x42, 0xea, 0x7a, 0xb8, 0x8c, 0xd6, 0x43, 0x31, 0x57, 0x4a, 0x0e, 0xb7, 0x42,
-	0x90, 0x7d, 0x4a, 0x0c, 0x06, 0x8c, 0x4e, 0x2c, 0x51, 0x4c, 0x65, 0x86, 0x49, 0x6c, 0x60, 0x37,
-	0x1b, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xd0, 0x19, 0xb7, 0xac, 0xc4, 0x00, 0x00, 0x00,
+	0xf1, 0xfa, 0x64, 0x16, 0x97, 0xa4, 0xe6, 0x05, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x28, 0x69,
+	0x70, 0xb1, 0x84, 0x24, 0x16, 0x67, 0x0b, 0xf1, 0x71, 0x31, 0x65, 0xa6, 0x48, 0x30, 0x2a, 0x30,
+	0x6a, 0x70, 0x06, 0x31, 0x65, 0xa6, 0x08, 0x09, 0x70, 0x31, 0x27, 0x16, 0xa5, 0x4b, 0x30, 0x81,
+	0x05, 0x40, 0x4c, 0xa5, 0x40, 0x2e, 0xde, 0xa0, 0xd4, 0x82, 0xfc, 0xa2, 0x12, 0xa8, 0x56, 0x0c,
+	0x2d, 0x62, 0x5c, 0x6c, 0x45, 0xa9, 0xc5, 0xa5, 0x39, 0x25, 0x50, 0x5d, 0x50, 0x9e, 0x90, 0x04,
+	0x17, 0x7b, 0x66, 0xb1, 0x6b, 0x51, 0x51, 0x7e, 0x91, 0x04, 0xb3, 0x02, 0xa3, 0x06, 0x47, 0x10,
+	0x8c, 0xab, 0x24, 0xc0, 0xc5, 0x07, 0x33, 0xb2, 0xb8, 0x20, 0x3f, 0xaf, 0x38, 0xd5, 0x68, 0x3f,
+	0x23, 0x17, 0xbb, 0x27, 0xc4, 0xb9, 0x42, 0xa1, 0x5c, 0x6c, 0x10, 0xb7, 0x0a, 0xa9, 0xeb, 0xe1,
+	0xf2, 0x90, 0x1e, 0x8a, 0x6f, 0xa4, 0xe4, 0x70, 0x2b, 0x04, 0xf9, 0x52, 0x89, 0xc1, 0x80, 0x51,
+	0x28, 0x96, 0x8b, 0x0d, 0x62, 0x29, 0x3e, 0x63, 0x51, 0x7c, 0x2a, 0xa5, 0x41, 0x58, 0x21, 0xc4,
+	0xfd, 0x4a, 0x0c, 0x4e, 0x2c, 0x51, 0x4c, 0x65, 0x86, 0x49, 0x6c, 0xe0, 0x88, 0x30, 0x06, 0x04,
+	0x00, 0x00, 0xff, 0xff, 0xce, 0xd4, 0x4a, 0x63, 0x99, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -127,6 +229,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type InvokeeClient interface {
 	Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (Invokee_ListenClient, error)
+	Report(ctx context.Context, in *ReportRequest, opts ...grpc.CallOption) (*ReportResponse, error)
 }
 
 type invokeeClient struct {
@@ -169,9 +272,19 @@ func (x *invokeeListenClient) Recv() (*Task, error) {
 	return m, nil
 }
 
+func (c *invokeeClient) Report(ctx context.Context, in *ReportRequest, opts ...grpc.CallOption) (*ReportResponse, error) {
+	out := new(ReportResponse)
+	err := c.cc.Invoke(ctx, "/mee6aas.agent.invokee.v1.Invokee/Report", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InvokeeServer is the server API for Invokee service.
 type InvokeeServer interface {
 	Listen(*ListenRequest, Invokee_ListenServer) error
+	Report(context.Context, *ReportRequest) (*ReportResponse, error)
 }
 
 // UnimplementedInvokeeServer can be embedded to have forward compatible implementations.
@@ -180,6 +293,9 @@ type UnimplementedInvokeeServer struct {
 
 func (*UnimplementedInvokeeServer) Listen(req *ListenRequest, srv Invokee_ListenServer) error {
 	return status.Errorf(codes.Unimplemented, "method Listen not implemented")
+}
+func (*UnimplementedInvokeeServer) Report(ctx context.Context, req *ReportRequest) (*ReportResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Report not implemented")
 }
 
 func RegisterInvokeeServer(s *grpc.Server, srv InvokeeServer) {
@@ -207,10 +323,33 @@ func (x *invokeeListenServer) Send(m *Task) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _Invokee_Report_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InvokeeServer).Report(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mee6aas.agent.invokee.v1.Invokee/Report",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InvokeeServer).Report(ctx, req.(*ReportRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Invokee_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "mee6aas.agent.invokee.v1.Invokee",
 	HandlerType: (*InvokeeServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Report",
+			Handler:    _Invokee_Report_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Listen",

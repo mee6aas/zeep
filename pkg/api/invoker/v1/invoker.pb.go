@@ -24,7 +24,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type Function struct {
+type Activity struct {
 	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -32,39 +32,39 @@ type Function struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Function) Reset()         { *m = Function{} }
-func (m *Function) String() string { return proto.CompactTextString(m) }
-func (*Function) ProtoMessage()    {}
-func (*Function) Descriptor() ([]byte, []int) {
+func (m *Activity) Reset()         { *m = Activity{} }
+func (m *Activity) String() string { return proto.CompactTextString(m) }
+func (*Activity) ProtoMessage()    {}
+func (*Activity) Descriptor() ([]byte, []int) {
 	return fileDescriptor_64215b76ff6c9221, []int{0}
 }
 
-func (m *Function) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Function.Unmarshal(m, b)
+func (m *Activity) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Activity.Unmarshal(m, b)
 }
-func (m *Function) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Function.Marshal(b, m, deterministic)
+func (m *Activity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Activity.Marshal(b, m, deterministic)
 }
-func (m *Function) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Function.Merge(m, src)
+func (m *Activity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Activity.Merge(m, src)
 }
-func (m *Function) XXX_Size() int {
-	return xxx_messageInfo_Function.Size(m)
+func (m *Activity) XXX_Size() int {
+	return xxx_messageInfo_Activity.Size(m)
 }
-func (m *Function) XXX_DiscardUnknown() {
-	xxx_messageInfo_Function.DiscardUnknown(m)
+func (m *Activity) XXX_DiscardUnknown() {
+	xxx_messageInfo_Activity.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Function proto.InternalMessageInfo
+var xxx_messageInfo_Activity proto.InternalMessageInfo
 
-func (m *Function) GetId() string {
+func (m *Activity) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-func (m *Function) GetName() string {
+func (m *Activity) GetName() string {
 	if m != nil {
 		return m.Name
 	}
@@ -72,7 +72,7 @@ func (m *Function) GetName() string {
 }
 
 type InvokeRequest struct {
-	Target               *Function `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
+	Target               *Activity `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -103,7 +103,7 @@ func (m *InvokeRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_InvokeRequest proto.InternalMessageInfo
 
-func (m *InvokeRequest) GetTarget() *Function {
+func (m *InvokeRequest) GetTarget() *Activity {
 	if m != nil {
 		return m.Target
 	}
@@ -150,7 +150,7 @@ func (m *InvokeResponse) GetResult() string {
 }
 
 func init() {
-	proto.RegisterType((*Function)(nil), "mee6aas.agent.invoker.v1.Function")
+	proto.RegisterType((*Activity)(nil), "mee6aas.agent.invoker.v1.Activity")
 	proto.RegisterType((*InvokeRequest)(nil), "mee6aas.agent.invoker.v1.InvokeRequest")
 	proto.RegisterType((*InvokeResponse)(nil), "mee6aas.agent.invoker.v1.InvokeResponse")
 }
@@ -162,7 +162,7 @@ var fileDescriptor_64215b76ff6c9221 = []byte{
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcd, 0xcc, 0x2b, 0xcb,
 	0xcf, 0x4e, 0x2d, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0xc8, 0x4d, 0x4d, 0x35, 0x4b,
 	0x4c, 0x2c, 0xd6, 0x4b, 0x4c, 0x4f, 0xcd, 0x2b, 0xd1, 0x83, 0x49, 0x96, 0x19, 0x2a, 0xe9, 0x71,
-	0x71, 0xb8, 0x95, 0xe6, 0x25, 0x97, 0x64, 0xe6, 0xe7, 0x09, 0xf1, 0x71, 0x31, 0x65, 0xa6, 0x48,
+	0x71, 0x38, 0x26, 0x97, 0x64, 0x96, 0x65, 0x96, 0x54, 0x0a, 0xf1, 0x71, 0x31, 0x65, 0xa6, 0x48,
 	0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x31, 0x65, 0xa6, 0x08, 0x09, 0x71, 0xb1, 0xe4, 0x25, 0xe6,
 	0xa6, 0x4a, 0x30, 0x81, 0x45, 0xc0, 0x6c, 0x25, 0x6f, 0x2e, 0x5e, 0x4f, 0xb0, 0xee, 0xa0, 0xd4,
 	0xc2, 0xd2, 0xd4, 0xe2, 0x12, 0x21, 0x2b, 0x2e, 0xb6, 0x92, 0xc4, 0xa2, 0xf4, 0xd4, 0x12, 0xb0,
@@ -171,7 +171,7 @@ var fileDescriptor_64215b76ff6c9221 = []byte{
 	0x5c, 0x9a, 0x53, 0x02, 0x75, 0x06, 0x94, 0x67, 0x94, 0xc1, 0xc5, 0x0e, 0x51, 0x59, 0x24, 0x14,
 	0xcb, 0xc5, 0x06, 0x61, 0x0a, 0xa9, 0xe3, 0xb6, 0x0a, 0xc5, 0x8d, 0x52, 0x1a, 0x84, 0x15, 0x42,
 	0xec, 0x57, 0x62, 0x70, 0x62, 0x89, 0x62, 0x2a, 0x33, 0x4c, 0x62, 0x03, 0x87, 0x9b, 0x31, 0x20,
-	0x00, 0x00, 0xff, 0xff, 0xe4, 0x05, 0x09, 0x5c, 0x48, 0x01, 0x00, 0x00,
+	0x00, 0x00, 0xff, 0xff, 0xb1, 0xfd, 0xdb, 0x96, 0x48, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.

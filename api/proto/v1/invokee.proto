@@ -5,10 +5,20 @@ option go_package = "v1";
 
 service Invokee {
     rpc Listen (ListenRequest) returns (stream Task){};
+    rpc Report (ReportRequest) returns (ReportResponse){};
 }
 
 message ListenRequest {}
 
 message Task {
-    string arg = 1;
+    string id = 1;
+    string arg = 2;
 }
+
+message ReportRequest {
+    string id = 1;
+    string result = 2;
+    bool isError = 3;
+}
+
+message ReportResponse {}

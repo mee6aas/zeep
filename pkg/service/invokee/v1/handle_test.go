@@ -37,3 +37,7 @@ func (h *mockHandle) Connected(ctx context.Context, _ *net.TCPAddr, conn chan<- 
 func (h *mockHandle) Disconnected(_ *net.TCPAddr) {
 	log.Println("disconnected")
 }
+
+func (h *mockHandle) Reported(_ *v1.InvocationResult) {
+
+}
