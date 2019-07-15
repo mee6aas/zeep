@@ -10,9 +10,16 @@ service Invokee {
 
 message ListenRequest {}
 
+enum TaskType {
+    UNKNOWN = 0;
+    LOAD = 1;
+    INVOKE = 2;
+}
+
 message Task {
-    string id = 1;
-    string arg = 2;
+    TaskType type = 1;
+    string id = 2;
+    string arg = 3;
 }
 
 message ReportRequest {
