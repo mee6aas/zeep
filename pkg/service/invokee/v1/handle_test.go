@@ -42,6 +42,6 @@ func (h *mockHandle) Disconnected(_ *net.TCPAddr) {
 	log.Println("disconnected")
 }
 
-func (h *mockHandle) Reported(_ *v1.InvocationResult) {
+func (h *mockHandle) Reported(_ *v1.ReportRequest) {
 
 }

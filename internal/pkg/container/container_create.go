@@ -28,7 +28,7 @@ func Create(ctx context.Context, config *Config) (response CreateCreatedBody, er
 			mount.Mount{
 				Type:   mount.TypeBind,
 				Source: config.Storage,
-				Target: api.KyleStorage,
+				Target: api.ActivityStorage,
 				BindOptions: &mount.BindOptions{
 					Propagation: mount.PropagationShared,
 				},

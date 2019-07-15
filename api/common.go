@@ -8,7 +8,7 @@ const (
 	ActivityResource = "/act/rsc"
 
 	// WorkflowStorage is the path of the directory shared across the workflow.
-	WorkflowStorage = "/flow"
+	WorkflowStorage = "/act/flow"
 
 	// DockerAPIVersion is version of Docker client API that Zeep use.
 	DockerAPIVersion = "1.39"
