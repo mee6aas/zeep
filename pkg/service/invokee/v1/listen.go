@@ -15,7 +15,10 @@ import (
 type Task = apiV1.Task
 
 // Listen accepts client.
-func (s *invokeeAPIServer) Listen(in *apiV1.ListenRequest, stream apiV1.Invokee_ListenServer) (err error) {
+func (s *invokeeAPIServer) Listen(
+	in *apiV1.ListenRequest,
+	stream apiV1.Invokee_ListenServer,
+) (err error) {
 	var (
 		addr      *net.TCPAddr
 		conn      chan Task

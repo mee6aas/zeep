@@ -8,9 +8,9 @@ import (
 
 	"google.golang.org/grpc"
 
-	v1 "github.com/mee6aas/zeep/pkg/api/invokee/v1"
+	v1 "github.com/mee6aas/zeep/pkg/api/invoker/v1"
 	grpcServer "github.com/mee6aas/zeep/pkg/protocol/grpc"
-	inokeeV1 "github.com/mee6aas/zeep/pkg/service/invokee/v1"
+	inokerV1 "github.com/mee6aas/zeep/pkg/service/invoker/v1"
 )
 
 const (
@@ -24,7 +24,7 @@ var (
 	stopTestServer   context.CancelFunc
 
 	testConn   *grpc.ClientConn
-	testClient v1.InvokeeClient
+	testClient v1.InvokerClient
 )
 
 func TestMain(m *testing.M) {
@@ -33,7 +33,7 @@ func TestMain(m *testing.M) {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	ctxTestServer, stopTestServer = context.WithCancel(context.Background())
-	v1.RegisterInvokeeServer(testGrpcServer, inokeeV1.NewInvokeeAPIServer(testServerHandle))
+	v1.RegisterInvokerServer(testGrpcServer, inokerV1.NewInvokerAPIServer(testServerHandle))
 
 	go grpcServer.Serve(ctxTestServer, testGrpcServer, testServerAddress)
 
@@ -41,9 +41,9 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	testClient = v1.NewInvokeeClient(testConn)
+	testClient = v1.NewInvokerClient(testConn)
 
-	log.Println("Inokee API client created")
+	log.Println("Inoker API client created")
 
 	code := m.Run()
 	stopTestServer()

@@ -8,7 +8,7 @@ type invokeeAPIServer struct {
 	handle InvokeeAPIServerHandle
 }
 
-// NewInovkeeAPIServer creates API server for Invokee service.
-func NewInovkeeAPIServer(h InvokeeAPIServerHandle) apiV1.InvokeeServer {
+// NewInvokeeAPIServer creates API server for Invokee service.
+func NewInvokeeAPIServer(h InvokeeAPIServerHandle) apiV1.InvokeeServer {
 	return &invokeeAPIServer{handle: h}
 }

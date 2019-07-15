@@ -12,7 +12,11 @@ import (
 type mockHandle struct {
 }
 
-func (h *mockHandle) Connected(ctx context.Context, _ *net.TCPAddr, conn chan<- v1.Task) (err error) {
+func (h *mockHandle) Connected(
+	ctx context.Context,
+	_ *net.TCPAddr,
+	conn chan<- v1.Task,
+) (err error) {
 	log.Println("connected")
 
 	go func() {
