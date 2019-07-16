@@ -13,11 +13,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Create creates a new storage based in the given configuration.
-func Create(config CreateConfig) (response CreateCreatedBody, err error) {
+// NewStorage creates a new storage based on the given configuration
+// and returns its descriptor.
+func NewStorage(config Config) (storage Storage, err error) {
 	var (
 		trg string // path of the storage to create
-		opt string // option of the tmpfs
+		opt string // option for tmpfs
 	)
 
 	trg = filepath.Join(storageRoot, uuid.New().String())
@@ -37,7 +38,8 @@ func Create(config CreateConfig) (response CreateCreatedBody, err error) {
 		return
 	}
 
-	response.Path = trg
+	storage.path = trg
+	storage.size = config.Size
 
 	return
 }

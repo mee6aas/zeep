@@ -9,12 +9,12 @@ import (
 )
 
 // Remove removes a storage.
-func Remove(path string) (err error) {
-	if err = unix.Unmount(path, unix.MNT_DETACH); err != nil {
+func (s *Storage) Remove() (err error) {
+	if err = unix.Unmount(s.path, unix.MNT_DETACH); err != nil {
 		return
 	}
 
-	if err = os.Remove(path); err != nil {
+	if err = os.Remove(s.path); err != nil {
 		return
 	}
 

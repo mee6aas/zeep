@@ -15,8 +15,6 @@ func (s *invokeeAPIServer) Report(
 	in *apiV1.ReportRequest,
 ) (rst *apiV1.ReportResponse, err error) {
 	rst = &apiV1.ReportResponse{}
-
-	s.handle.Reported(in)
-
+	err = s.handle.Reported(in)
 	return
 }

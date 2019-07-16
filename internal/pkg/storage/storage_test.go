@@ -13,23 +13,20 @@ import (
 var (
 	testStorageCreateFailed = false
 
+	testStorage      Storage
 	testStorageQuota = uint32(1024 * 4) // 4KiB
-	testStoragePath  string
 )
 
 func TestStorageCreate(t *testing.T) {
 	var (
 		err error
-		res CreateCreatedBody
 	)
 
-	if res, err = Create(CreateConfig{
+	if testStorage, err = NewStorage(Config{
 		Size: testStorageQuota * 2,
 	}); err != nil {
 		t.Fatalf("failed to create storage: %v", err)
 	}
-
-	testStoragePath = res.Path
 }
 
 func TestStorageQuota(t *testing.T) {
@@ -42,7 +39,7 @@ func TestStorageQuota(t *testing.T) {
 		t.Skipf("TestStorageCreate failed")
 	}
 
-	if trg, err = ioutil.TempFile(testStoragePath, ""); err != nil {
+	if trg, err = ioutil.TempFile(testStorage.Path(), ""); err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
 	}
 
@@ -64,7 +61,7 @@ func TestStorageRemove(t *testing.T) {
 		t.Skipf("TestStorageCreate failed")
 	}
 
-	if err = Remove(testStoragePath); err != nil {
+	if err = testStorage.Remove(); err != nil {
 		t.Fatalf("failed to remove storage: %v", err)
 	}
 }

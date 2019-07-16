@@ -16,9 +16,9 @@ var (
 	testContainerCreateFailed = false
 
 	testEngineClient         *docker.Client
+	testContainer            Container
 	testContainerImage       = "golang:1.12"
 	testContainerStoragePath string
-	testContainerID          string
 )
 
 func TestContainerCreate(t *testing.T) {
@@ -26,21 +26,18 @@ func TestContainerCreate(t *testing.T) {
 		err    error
 		ctx    = context.Background()
 		cancel context.CancelFunc
-		res    CreateCreatedBody
 	)
 
 	ctx, cancel = context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	if res, err = Create(ctx, &Config{
+	if testContainer, err = NewContainer(ctx, Config{
 		Image:   testContainerImage,
 		Storage: testContainerStoragePath,
 	}); err != nil {
 		testContainerCreateFailed = true
 		t.Fatalf("Failed to create container %v", err)
 	}
-
-	testContainerID = res.ID
 }
 
 func TestContainerRemove(t *testing.T) {
@@ -57,7 +54,7 @@ func TestContainerRemove(t *testing.T) {
 	ctx, cancel = context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	if err = Remove(ctx, testContainerID); err != nil {
+	if err = testContainer.Remove(ctx); err != nil {
 		t.Fatalf("Failed to remove container %v", err)
 	}
 

@@ -9,5 +9,5 @@ import (
 type InvokeeAPIServerHandle interface {
 	Connected(context.Context, *net.TCPAddr, chan<- Task) error
 	Disconnected(*net.TCPAddr)
-	Reported(*ReportRequest)
+	Reported(*ReportRequest) error
 }
