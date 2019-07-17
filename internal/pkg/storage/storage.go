@@ -11,7 +11,7 @@ type Storage struct {
 }
 
 // Path returns the path of this storage.
-func (s *Storage) Path() string { return s.path }
+func (s Storage) Path() string { return s.path }
 
 // Config holds the configuration for the storage.
 type Config struct {

@@ -9,7 +9,7 @@ import (
 )
 
 // Remove removes a storage.
-func (s *Storage) Remove() (err error) {
+func (s Storage) Remove() (err error) {
 	if err = unix.Unmount(s.path, unix.MNT_DETACH); err != nil {
 		return
 	}

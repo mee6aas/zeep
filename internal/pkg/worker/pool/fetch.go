@@ -9,7 +9,7 @@ import (
 )
 
 // Fetch fetches a worker in this pool.
-func (p *Pool) Fetch(image string) (w worker.Worker, err error) {
+func (p Pool) Fetch(image string) (w worker.Worker, err error) {
 	var (
 		ok bool
 		ws []worker.Worker

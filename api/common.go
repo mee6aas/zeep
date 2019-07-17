@@ -1,10 +1,16 @@
 package api
 
 const (
+	// NetworkName is a name of docker network that agent use.
+	NetworkName = "m6s"
+
 	// ActivityStorage is the path of the directory that activity use.
+	// If the invocation ID is `INVOKE_ID`, the invoked activity can store data in /act/`INVOKE_ID`.
+	// A special directory, where the /act/cur directory points to the directory where the currently invoked activity can store data.
 	ActivityStorage = "/act"
 
 	// ActivityResource is the path of the directory that contains resources activity to run.
+	// If the resource ID is `RESOURCE_ID`, the resource to load activity is in /act/rsc/`RESOURCE_ID`.
 	ActivityResource = "/act/rsc"
 
 	// WorkflowStorage is the path of the directory shared across the workflow.

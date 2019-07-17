@@ -34,14 +34,14 @@ func NewPool(
 	pool *Pool,
 	err error,
 ) {
-	args := &Options{
+	args := Options{
 		eachCPU: 1,
 		eachMem: 1024 * 128,
 		maxCPU:  1,
 	}
 
 	for _, setter := range setters {
-		setter(args)
+		setter(&args)
 	}
 
 	workers := make(map[string][]worker.Worker)
@@ -51,10 +51,17 @@ func NewPool(
 
 	pool = &Pool{
 		images: config.Images,
-		option: *args,
+		option: args,
 
 		usedCPU: 0,
 		usedMem: 0,
+
+		workers: workers,
+	}
+
+	for _, image := range config.Images {
+		// TODO: go and wait
+		pool.alloc(context.Background(), image)
 	}
 
 	return

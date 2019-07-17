@@ -21,18 +21,22 @@ var (
 // Container describes container.
 type Container struct {
 	id      string // ID of container
+	ip      string // TCP address of container
 	image   string // Image used to create container
 	storage string // Path of the directory mounted on container
 }
 
 // ID returns the ID of this container.
-func (c *Container) ID() string { return c.id }
+func (c Container) ID() string { return c.id }
+
+// IP returns the IP address of this container.
+func (c Container) IP() string { return c.ip }
 
 // Image returns the image used to create this container.
-func (c *Container) Image() string { return c.image }
+func (c Container) Image() string { return c.image }
 
 // Storage returns the path of the directory that mounted on this container.
-func (c *Container) Storage() string { return c.storage }
+func (c Container) Storage() string { return c.storage }
 
 // Config holds the configuration for the container.
 type Config struct {
@@ -51,6 +55,7 @@ func NewContainer(ctx context.Context, config Config) (cont Container, err error
 		Image: config.Image,
 		Env:   []string{},
 	}, &dockerCont.HostConfig{
+		NetworkMode: api.NetworkName,
 		Mounts: []dockerMnt.Mount{
 			dockerMnt.Mount{
 				Type:   dockerMnt.TypeBind,

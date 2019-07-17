@@ -7,7 +7,7 @@ import (
 )
 
 // Drop removes worker and restore the resource of pool.
-func (p *Pool) Drop(w worker.Worker) (err error) {
+func (p Pool) Drop(w worker.Worker) (err error) {
 	err = w.Remove(context.Background())
 
 	// TODO update used* fields
