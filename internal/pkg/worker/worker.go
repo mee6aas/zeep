@@ -25,8 +25,8 @@ func (w *Worker) Storage() storage.Storage { return w.storage }
 
 // Config holds the configuration for the worker.
 type Config struct {
-	Image string // Name of the image worker use
-	Size  uint32 // Size limit of the storage to mount
+	Image string // Image to use
+	Size  uint64 // Size limit of the storage to mount
 }
 
 // NewWorker creates a new worker based on the given configuration
