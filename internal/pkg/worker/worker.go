@@ -8,19 +8,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TaskAssigner passes task to its task operator.
-type TaskAssigner interface {
-	Assign(context.Context, interface{}) error
-}
-
 // Worker describes worker.
 type Worker struct {
 	InvokeeVersion string // Version of invokee service that assigned to this worker
 
 	container    container.Container // Container descriptor
 	storage      storage.Storage     // Storage descriptor
-	isConnected  bool                // Is taskAssigner set
+	isAllocated  bool                // Is taskAssigner set
 	taskAssigner TaskAssigner        // Pass task to connected stream
+	isAssigned   bool                // Is task assigned
 }
 
 // ID returns the ID of the container used by this worker.
@@ -32,22 +28,17 @@ func (w Worker) Container() container.Container { return w.container }
 // Storage returns a descriptor for the storage used by this worker
 func (w Worker) Storage() storage.Storage { return w.storage }
 
-// IsConnected checks if this worker connted to its task operator.
-func (w Worker) IsConnected() bool { return w.isConnected }
+// IsAllocated checks if the task is allocated to this worker.
+func (w Worker) IsAllocated() bool { return w.isAllocated }
 
-// Connect connects task assigner to this worker.
-// By this behavior, this worker is connected to the task operator.
-func (w Worker) Connect(ta TaskAssigner) (err error) {
-	if w.IsConnected() {
-		err = errors.New("Already connected worker")
-		return
-	}
+// IsAssigned checks if the task is assigned to this worker.
+func (w Worker) IsAssigned() bool { return w.isAssigned }
 
-	w.isConnected = true
-	w.taskAssigner = ta
+// Resolve set isAssigned flag to false
+func (w *Worker) Resolve() { w.isAssigned = false }
 
-	return
-}
+// Dealloc set isAllocated flag to false
+func (w *Worker) Dealloc() { w.isAllocated = false }
 
 // Config holds the configuration for the worker.
 type Config struct {

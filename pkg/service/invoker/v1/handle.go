@@ -1,6 +1,8 @@
 package v1
 
+import "context"
+
 // InvokerAPIServerHandle handles server events.
 type InvokerAPIServerHandle interface {
-	Requested(*InvokeRequest) (*InvokeResponse, error)
+	Requested(context.Context, *InvokeRequest) (*InvokeResponse, error)
 }

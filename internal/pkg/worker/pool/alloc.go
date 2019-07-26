@@ -22,6 +22,7 @@ func (p Pool) alloc(ctx context.Context, image string) (err error) {
 
 	if w, err = worker.NewWorker(ctx, worker.Config{
 		Image: image,
+		// TODO: isolation
 		// Size:
 	}); err != nil {
 		return err

@@ -21,8 +21,6 @@ type Pool struct {
 // Config holds the configuration for the pool.
 type Config struct {
 	Images []string // Images to used by the workers
-	MaxCPU float64  // Maximum CPU resources that can be allocated
-	MaxMem uint64   // Maximum amount of memory that can be allocated
 }
 
 // NewPool creates a new pool based on the given configuration and options.
@@ -31,13 +29,14 @@ func NewPool(
 	config Config,
 	setters ...Option,
 ) (
-	pool *Pool,
+	pool Pool,
 	err error,
 ) {
 	args := Options{
 		eachCPU: 1,
 		eachMem: 1024 * 128,
 		maxCPU:  1,
+		maxMem:  0,
 	}
 
 	for _, setter := range setters {
@@ -49,7 +48,7 @@ func NewPool(
 		workers[image] = make([]worker.Worker, 0, 32)
 	}
 
-	pool = &Pool{
+	pool = Pool{
 		images: config.Images,
 		option: args,
 
