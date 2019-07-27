@@ -60,7 +60,9 @@ func NewPool(
 
 	for _, image := range config.Images {
 		// TODO: go and wait
-		pool.alloc(context.Background(), image)
+		if err = pool.alloc(ctx, image); err != nil {
+			return
+		}
 	}
 
 	return

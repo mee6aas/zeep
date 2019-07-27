@@ -8,7 +8,7 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
-func (p Pool) alloc(ctx context.Context, image string) (err error) {
+func (p *Pool) alloc(ctx context.Context, image string) (err error) {
 	var (
 		ok bool
 		w  worker.Worker
@@ -28,15 +28,15 @@ func (p Pool) alloc(ctx context.Context, image string) (err error) {
 		return err
 	}
 
-	cont := w.Container()
-	if err = cont.Start(ctx); err != nil {
+	c := w.Container()
+	if err = c.Start(ctx); err != nil {
 		// TODO: handle orphan worker
 		_ = w.Remove(ctx)
 
 		return err
 	}
 
-	ws = append(ws, w)
+	p.workers[image] = append(ws, w)
 
 	// TODO: update used* fields
 

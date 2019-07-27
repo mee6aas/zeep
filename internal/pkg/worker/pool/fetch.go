@@ -9,7 +9,7 @@ import (
 )
 
 // Fetch fetches a worker in this pool.
-func (p Pool) Fetch(image string) (w worker.Worker, err error) {
+func (p *Pool) Fetch(image string) (w worker.Worker, err error) {
 	var (
 		ok bool
 		ws []worker.Worker
@@ -21,15 +21,12 @@ func (p Pool) Fetch(image string) (w worker.Worker, err error) {
 	}
 
 	if len(ws) == 0 {
-		p.alloc(context.Background(), image)
+		if err = p.alloc(context.Background(), image); err != nil {
+			return
+		}
 	}
 
-	if len(ws) == 1 {
-		w = ws[0]
-		return
-	}
-
-	w, ws = ws[0], ws[1:]
+	w, p.workers[image] = ws[0], ws[1:]
 
 	go p.alloc(context.Background(), image)
 

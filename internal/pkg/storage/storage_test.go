@@ -30,14 +30,14 @@ func TestStorageCreate(t *testing.T) {
 }
 
 func TestStorageQuota(t *testing.T) {
+	if testStorageCreateFailed {
+		t.Skipf("TestStorageCreate failed")
+	}
+
 	var (
 		err error
 		trg *os.File
 	)
-
-	if testStorageCreateFailed {
-		t.Skipf("TestStorageCreate failed")
-	}
 
 	if trg, err = ioutil.TempFile(testStorage.Path(), ""); err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
@@ -53,13 +53,13 @@ func TestStorageQuota(t *testing.T) {
 }
 
 func TestStorageRemove(t *testing.T) {
-	var (
-		err error
-	)
-
 	if testStorageCreateFailed {
 		t.Skipf("TestStorageCreate failed")
 	}
+
+	var (
+		err error
+	)
 
 	if err = testStorage.Remove(); err != nil {
 		t.Fatalf("failed to remove storage: %v", err)
@@ -67,15 +67,15 @@ func TestStorageRemove(t *testing.T) {
 }
 
 func TestStorageCreateWithoutQuota(t *testing.T) {
+	if testStorageCreateFailed {
+		t.Skipf("TestStorageCreate failed")
+	}
+
 	var (
 		err  error
 		stor Storage
 		trg  *os.File
 	)
-
-	if testStorageCreateFailed {
-		t.Skipf("TestStorageCreate failed")
-	}
 
 	if stor, err = NewStorage(Config{}); err != nil {
 		t.Fatalf("failed to create storage: %v", err)

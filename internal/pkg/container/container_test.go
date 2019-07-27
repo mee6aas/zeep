@@ -21,14 +21,39 @@ var (
 	testContainerStoragePath string
 )
 
-func TestContainerCreate(t *testing.T) {
+func TestContainerIsExistsFail(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
+	defer cancel()
+
+	c := Container{}
+
+	if c.IsExists(ctx) {
+		t.Fatal("Expected to not exists")
+	}
+}
+
+func TestContainerCreateFail(t *testing.T) {
 	var (
-		err    error
-		ctx    = context.Background()
-		cancel context.CancelFunc
+		err error
 	)
 
-	ctx, cancel = context.WithTimeout(ctx, time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	if testContainer, err = NewContainer(ctx, Config{
+		Image:   "not exists",
+		Storage: testContainerStoragePath,
+	}); err == nil {
+		t.Fatal("Expected to fail to create container")
+	}
+}
+
+func TestContainerCreate(t *testing.T) {
+	var (
+		err error
+	)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	if testContainer, err = NewContainer(ctx, Config{
@@ -37,6 +62,10 @@ func TestContainerCreate(t *testing.T) {
 	}); err != nil {
 		testContainerCreateFailed = true
 		t.Fatalf("Failed to create container %v", err)
+	}
+
+	if ok := testContainer.IsExists(ctx); !ok {
+		t.Fatalf("Expected to container exists.")
 	}
 }
 
