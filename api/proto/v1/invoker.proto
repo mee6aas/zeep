@@ -8,12 +8,13 @@ service Invoker {
 }
 
 message Activity {
-    string id = 1;
-    string name = 2;
+    string name = 1;
+    string label = 2;
 }
 
 message InvokeRequest {
     Activity target = 1;
+    string username = 2;
 }
 
 message InvokeResponse {

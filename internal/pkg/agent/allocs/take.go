@@ -4,14 +4,14 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
-// Take withdraws worker from collection with specified id.
-func Take(id string) (w worker.Worker, ok bool) {
+// Take withdraws worker from collection with specified task id.
+func Take(actID string) (w worker.Worker, ok bool) {
 	var (
 		ws []worker.Worker
 	)
 
 	for {
-		if ws, ok = allocs[id]; !ok {
+		if ws, ok = allocs[actID]; !ok {
 			return
 		}
 
@@ -20,10 +20,10 @@ func Take(id string) (w worker.Worker, ok bool) {
 			return
 		}
 
-		w, allocs[id] = ws[0], ws[1:]
+		w, allocs[actID] = ws[0], ws[1:]
 
 		if len(ws) == 0 {
-			delete(allocs, id)
+			delete(allocs, actID)
 		}
 
 		if w.IsAllocated() {

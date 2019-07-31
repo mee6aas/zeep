@@ -1,6 +1,6 @@
 package assigns
 
 var (
-	//                 invokeID
+	//                 invkID
 	assigns = make(map[string](chan interface{}))
 )

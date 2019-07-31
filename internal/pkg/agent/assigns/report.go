@@ -1,19 +1,19 @@
 package assigns
 
 // Report passes result of the invocation to the invoker.
-func Report(id string, rst interface{}) (ok bool) {
+func Report(invkID string, rst interface{}) (ok bool) {
 	var (
 		c chan interface{}
 	)
 
-	if c, ok = assigns[id]; !ok {
+	if c, ok = assigns[invkID]; !ok {
 		return
 	}
 
 	c <- rst
 
 	close(c)
-	delete(assigns, id)
+	delete(assigns, invkID)
 
 	return
 }

@@ -5,6 +5,6 @@ import (
 )
 
 var (
-	//                taskID
+	//                actID
 	allocs = make(map[string][]worker.Worker)
 )

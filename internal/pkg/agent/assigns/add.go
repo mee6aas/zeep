@@ -6,7 +6,7 @@ import (
 )
 
 // Add inserts an assign and return id of inserted assign.
-func Add() (id string, c chan interface{}) {
+func Add() (invkID string, c chan interface{}) {
 	var (
 		err error
 		uid uuid.UUID
@@ -18,15 +18,15 @@ func Add() (id string, c chan interface{}) {
 			panic(err)
 		}
 
-		id = uid.String()
+		invkID = uid.String()
 
-		if _, ok := assigns[id]; !ok {
+		if _, ok := assigns[invkID]; !ok {
 			break
 		}
 	}
 
 	c = make(chan interface{})
-	assigns[id] = c
+	assigns[invkID] = c
 
 	return
 }

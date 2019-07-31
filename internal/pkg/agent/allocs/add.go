@@ -5,7 +5,7 @@ import (
 )
 
 // Add inserts worker in collection with specified id.
-func Add(id string, w worker.Worker) (ok bool) {
+func Add(actID string, w worker.Worker) (ok bool) {
 	var (
 		ws []worker.Worker
 	)
@@ -14,12 +14,12 @@ func Add(id string, w worker.Worker) (ok bool) {
 		return
 	}
 
-	if ws, ok = allocs[id]; !ok {
+	if ws, ok = allocs[actID]; !ok {
 		ws = make([]worker.Worker, 0, 1)
 		ok = true
 	}
 
-	allocs[id] = append(ws, w)
+	allocs[actID] = append(ws, w)
 
 	return
 }
