@@ -36,32 +36,28 @@ func (h invokeeV1Handle) Connected(
 	ctx context.Context,
 	addr *net.TCPAddr,
 	stream chan<- v1.Task,
-) (err error) {
-	for _, w := range workerPool.Entries() {
-		cont := w.Container()
-		if cont.IP() == addr.IP.String() {
-			w.InvokeeVersion = "1"
-			w.Allocate(&invokeeV1TaskAssigner{
-				ctx:    ctx,
-				stream: stream,
-			})
+) (e error) {
+	ok := workerPool.Grant(addr.IP.String(), &invokeeV1TaskAssigner{
+		ctx:    ctx,
+		stream: stream,
+	}, "1")
 
-			return
-		}
+	if !ok {
+		e = errors.New("Invalid connection")
 	}
 
-	return errors.New("Invalid connection")
+	return
 }
 
 func (h invokeeV1Handle) Disconnected(_ *net.TCPAddr) {
 
 }
 
-func (h invokeeV1Handle) Reported(req *v1.ReportRequest) (err error) {
+func (h invokeeV1Handle) Reported(req *v1.ReportRequest) (e error) {
 	id := req.GetId()
 
 	if ok := assigns.Report(id, req); !ok {
-		err = status.Error(codes.NotFound, "Invocation ID not found")
+		e = status.Error(codes.NotFound, "Invocation ID not found")
 		return
 	}
 

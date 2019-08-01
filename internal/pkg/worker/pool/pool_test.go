@@ -9,6 +9,10 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/worker/pool"
 )
 
+type mockTA struct{}
+
+func (ta mockTA) Assign(context.Context, interface{}) (err error) { return }
+
 var (
 	testImage = "golang:1.12"
 	testPool  pool.Pool
@@ -56,10 +60,19 @@ func TestFetch(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	if w, err = testPool.Fetch(testImage); err != nil {
+	for _, w := range testPool.Entries() {
+		testPool.Grant(w.Container().IP(), &mockTA{}, "C-137")
+	}
+
+	if w, err = testPool.Fetch(ctx, testImage); err != nil {
 		t.Fatalf("Failed to fetch worker from pool: %v", err)
 	}
-	defer w.Remove(ctx)
+
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+		w.Remove(ctx)
+	}()
 
 	if !w.Container().IsExists(ctx) {
 		t.Fatal("Expected that the container exists.")
@@ -69,20 +82,31 @@ func TestFetch(t *testing.T) {
 }
 
 func TestPrewarming(t *testing.T) {
+	var (
+		id = ""
+	)
+
 	if testNewPoolFailed {
 		t.Skip("TestNewPool failed")
 	}
 
-	time.Sleep(time.Second * 5)
+	for i := 0; i < 50; i++ {
+		time.Sleep(time.Millisecond * 200)
 
-	ws := testPool.Entries()
+		for _, w := range testPool.Entries() {
+			id = w.ID()
+			break
+		}
 
-	if len(ws) == 0 {
-		t.Fatal("Expected that the worker had created.")
+		if id != "" {
+			break
+		}
 	}
 
-	for _, w := range ws {
-		t.Logf("Worker %s prewarmed", w.ID())
+	if id != "" {
+		t.Logf("Worker %s prewarmed", id)
+	} else {
+		t.Fatal("Expected that the worker had created.")
 	}
 }
 

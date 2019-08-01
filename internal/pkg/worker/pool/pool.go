@@ -14,8 +14,12 @@ type Pool struct {
 	usedCPU float64 // Cpu resources allocated to this pool.
 	usedMem uint64  // Amount of memory allocated to this pool in KiB.
 
-	//			image
-	workers map[string][]worker.Worker
+	// created but not allocated workers
+	//             IP
+	pendings map[string]worker.Worker
+
+	//          image
+	granted map[string](chan worker.Worker)
 }
 
 // Config holds the configuration for the pool.
@@ -43,9 +47,9 @@ func NewPool(
 		setter(&args)
 	}
 
-	workers := make(map[string][]worker.Worker)
+	granted := make(map[string](chan worker.Worker))
 	for _, image := range config.Images {
-		workers[image] = make([]worker.Worker, 0, 32)
+		granted[image] = make(chan worker.Worker, 1)
 	}
 
 	pool = Pool{
@@ -55,7 +59,8 @@ func NewPool(
 		usedCPU: 0,
 		usedMem: 0,
 
-		workers: workers,
+		pendings: make(map[string]worker.Worker),
+		granted:  granted,
 	}
 
 	for _, image := range config.Images {

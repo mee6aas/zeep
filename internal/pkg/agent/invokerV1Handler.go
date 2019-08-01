@@ -41,7 +41,7 @@ func (h invokerV1Handle) InvokeRequested(
 	// get worker
 	if w, ok = allocs.Take(username, actName); !ok {
 		// warm worker not exists
-		if w, e = workerPool.Fetch(a.Runtime); e != nil {
+		if w, e = workerPool.Fetch(ctx, a.Runtime); e != nil {
 			// TODO: provide details of error
 			// possible reasons
 			//	- runtime not provided by pool
@@ -50,8 +50,6 @@ func (h invokerV1Handle) InvokeRequested(
 			e = errors.Wrap(e, "Failed to fetch worker from pool")
 			return
 		}
-
-		// TODO: wait for worker allocated
 
 		// warming worker
 		// TODO: move activity resource to container

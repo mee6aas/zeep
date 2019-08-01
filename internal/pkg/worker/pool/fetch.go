@@ -8,25 +8,33 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
-// Fetch fetches a worker in this pool.
-func (p *Pool) Fetch(image string) (w worker.Worker, err error) {
+// Fetch withdraws a worker in this pool.
+func (p *Pool) Fetch(ctx context.Context, image string) (w worker.Worker, e error) {
 	var (
-		ok bool
-		ws []worker.Worker
+		ok = false
 	)
 
-	if ws, ok = p.workers[image]; !ok {
-		err = errors.New("not found")
+	for _, img := range p.images {
+		ok = img == image
+	}
+	if !ok {
+		e = errors.New("not found")
 		return
 	}
 
-	if len(ws) == 0 {
-		if err = p.alloc(context.Background(), image); err != nil {
-			return
-		}
+	select {
+	case w = <-p.granted[image]:
+	case <-ctx.Done():
 	}
 
-	w, p.workers[image] = ws[0], ws[1:]
+	if e = ctx.Err(); e != nil {
+		return
+	}
+
+	if ok = w.IsAllocated(); !ok {
+		e = errors.New("Fail")
+		return
+	}
 
 	go p.alloc(context.Background(), image)
 

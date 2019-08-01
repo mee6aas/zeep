@@ -8,35 +8,37 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
-func (p *Pool) alloc(ctx context.Context, image string) (err error) {
+func (p *Pool) alloc(ctx context.Context, image string) (e error) {
 	var (
-		ok bool
+		ok = false
 		w  worker.Worker
-		ws []worker.Worker
 	)
 
-	if ws, ok = p.workers[image]; !ok {
-		err = errors.New("not found")
+	for _, img := range p.images {
+		ok = img == image
+	}
+	if !ok {
+		e = errors.New("Image not provided by pool")
 		return
 	}
 
-	if w, err = worker.NewWorker(ctx, worker.Config{
+	if w, e = worker.NewWorker(ctx, worker.Config{
 		Image: image,
 		// TODO: isolation
 		// Size:
-	}); err != nil {
-		return err
+	}); e != nil {
+		return
 	}
 
 	c := w.Container()
-	if err = c.Start(ctx); err != nil {
+	if e = c.Start(ctx); e != nil {
 		// TODO: handle orphan worker
 		_ = w.Remove(ctx)
 
-		return err
+		return
 	}
 
-	p.workers[image] = append(ws, w)
+	p.pendings[w.Container().IP()] = w
 
 	// TODO: update used* fields
 
