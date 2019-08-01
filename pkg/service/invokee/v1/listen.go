@@ -4,11 +4,11 @@ import (
 	"context"
 	"net"
 
-	apiV1 "github.com/mee6aas/zeep/pkg/api/invokee/v1"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
+
+	apiV1 "github.com/mee6aas/zeep/pkg/api/invokee/v1"
 )
 
 // Task is message to be sent to invokee.

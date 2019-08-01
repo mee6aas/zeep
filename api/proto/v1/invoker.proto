@@ -5,6 +5,7 @@ option go_package = "v1";
 
 service Invoker {
     rpc Invoke (InvokeRequest) returns (InvokeResponse){};
+    rpc Register (RegisterRequest) returns (RegisterResponse){};
 }
 
 message Activity {
@@ -13,10 +14,24 @@ message Activity {
 }
 
 message InvokeRequest {
-    Activity target = 1;
-    string username = 2;
+    string username = 1;
+    Activity target = 2;
 }
 
 message InvokeResponse {
     string result = 1;
 }
+
+enum RegisterMethod {
+    UNKOWN = 0;
+    LOCAL = 1;
+    GLOBAL = 2;
+}
+
+message RegisterRequest {
+    string username = 1;
+    RegisterMethod method = 2;
+    string path = 3;
+}
+
+message RegisterResponse {}

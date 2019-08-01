@@ -26,16 +26,18 @@ func Add(username string, actID string, actDirPath string) (e error) {
 		return
 	}
 
+	act.ID = actID
+
 	if e = copy.Copy(actDirPath, filepath.Join(rootDirPath, actID)); e != nil {
 		return
 	}
 
-	if acts, ok = entries[username]; !ok {
+	if acts, ok = activities[username]; !ok {
 		acts = make(map[string]activity.Activity)
 	}
 
 	acts[actID] = act
-	entries[username] = acts
+	activities[username] = acts
 
 	return
 }

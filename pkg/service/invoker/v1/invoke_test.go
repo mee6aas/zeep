@@ -21,14 +21,14 @@ func TestInvoke(t *testing.T) {
 
 	if res, err = testClient.Invoke(ctx, &v1.InvokeRequest{
 		Target: &v1.Activity{
-			Id:   "Microverse",
-			Name: "Zeep",
+			Name:  "Zeep",
+			Label: "C-137",
 		},
 	}); err != nil {
 		t.Fatalf("failed to request to invoke: %v", err)
 	}
 
-	if res.GetResult() != "Zeep in Microverse" {
+	if res.GetResult() != "Zeep@C-137" {
 		t.Fatalf("Undesired result")
 	}
 }

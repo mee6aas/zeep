@@ -1,6 +1,9 @@
 package api
 
 const (
+	// Mee6aaSDockerOrgName is the name of the docker hub organization Mee6aaS use.
+	Mee6aaSDockerOrgName = "mee6aas"
+
 	// NetworkName is a name of docker network that agent use.
 	NetworkName = "m6s"
 
@@ -9,8 +12,8 @@ const (
 	// A special directory, where the /act/cur directory points to the directory where the currently invoked activity can store data.
 	ActivityStorage = "/act"
 
-	// ActivityResource is the path of the directory that contains resources activity to run.
-	// If the resource ID is `RESOURCE_ID`, the resource to load activity is in /act/rsc/`RESOURCE_ID`.
+	// ActivityResource is the path of the directory that contains resources to run activity.
+	// If the activity name is `ACTIVITY_NAME`, the resource to load activity is in /act/rsc/`ACTIVITY_NAME`.
 	ActivityResource = "/act/rsc"
 
 	// WorkflowStorage is the path of the directory shared across the workflow.

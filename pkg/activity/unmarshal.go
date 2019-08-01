@@ -11,6 +11,7 @@ import (
 // Unmarshal parses activity configuration.
 func Unmarshal(act []byte) (a Activity, e error) {
 	e = json.Unmarshal(act, &a)
+	a = Normalize(a)
 
 	return
 }

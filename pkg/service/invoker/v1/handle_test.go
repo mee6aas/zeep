@@ -9,11 +9,19 @@ import (
 type mockHandle struct {
 }
 
-func (h *mockHandle) Requested(
+func (h *mockHandle) InvokeRequested(
 	_ context.Context,
 	in *v1.InvokeRequest,
 ) (out *v1.InvokeResponse, err error) {
 	act := in.GetTarget()
-	out = &v1.InvokeResponse{Result: act.GetName() + " in " + act.GetId()}
+	out = &v1.InvokeResponse{Result: act.GetName() + "@" + act.GetLabel()}
+	return
+}
+
+func (h *mockHandle) RegisterRequested(
+	_ context.Context,
+	username string,
+	actDir string,
+) (err error) {
 	return
 }

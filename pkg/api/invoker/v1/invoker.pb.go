@@ -24,6 +24,34 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type RegisterMethod int32
+
+const (
+	RegisterMethod_UNKOWN RegisterMethod = 0
+	RegisterMethod_LOCAL  RegisterMethod = 1
+	RegisterMethod_GLOBAL RegisterMethod = 2
+)
+
+var RegisterMethod_name = map[int32]string{
+	0: "UNKOWN",
+	1: "LOCAL",
+	2: "GLOBAL",
+}
+
+var RegisterMethod_value = map[string]int32{
+	"UNKOWN": 0,
+	"LOCAL":  1,
+	"GLOBAL": 2,
+}
+
+func (x RegisterMethod) String() string {
+	return proto.EnumName(RegisterMethod_name, int32(x))
+}
+
+func (RegisterMethod) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_64215b76ff6c9221, []int{0}
+}
+
 type Activity struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Label                string   `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
@@ -72,8 +100,8 @@ func (m *Activity) GetLabel() string {
 }
 
 type InvokeRequest struct {
-	Target               *Activity `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
-	Username             string    `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Username             string    `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Target               *Activity `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -104,18 +132,18 @@ func (m *InvokeRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_InvokeRequest proto.InternalMessageInfo
 
-func (m *InvokeRequest) GetTarget() *Activity {
-	if m != nil {
-		return m.Target
-	}
-	return nil
-}
-
 func (m *InvokeRequest) GetUsername() string {
 	if m != nil {
 		return m.Username
 	}
 	return ""
+}
+
+func (m *InvokeRequest) GetTarget() *Activity {
+	if m != nil {
+		return m.Target
+	}
+	return nil
 }
 
 type InvokeResponse struct {
@@ -157,30 +185,126 @@ func (m *InvokeResponse) GetResult() string {
 	return ""
 }
 
+type RegisterRequest struct {
+	Username             string         `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Method               RegisterMethod `protobuf:"varint,2,opt,name=method,proto3,enum=mee6aas.agent.invoker.v1.RegisterMethod" json:"method,omitempty"`
+	Path                 string         `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *RegisterRequest) Reset()         { *m = RegisterRequest{} }
+func (m *RegisterRequest) String() string { return proto.CompactTextString(m) }
+func (*RegisterRequest) ProtoMessage()    {}
+func (*RegisterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_64215b76ff6c9221, []int{3}
+}
+
+func (m *RegisterRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RegisterRequest.Unmarshal(m, b)
+}
+func (m *RegisterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RegisterRequest.Marshal(b, m, deterministic)
+}
+func (m *RegisterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegisterRequest.Merge(m, src)
+}
+func (m *RegisterRequest) XXX_Size() int {
+	return xxx_messageInfo_RegisterRequest.Size(m)
+}
+func (m *RegisterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegisterRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegisterRequest proto.InternalMessageInfo
+
+func (m *RegisterRequest) GetUsername() string {
+	if m != nil {
+		return m.Username
+	}
+	return ""
+}
+
+func (m *RegisterRequest) GetMethod() RegisterMethod {
+	if m != nil {
+		return m.Method
+	}
+	return RegisterMethod_UNKOWN
+}
+
+func (m *RegisterRequest) GetPath() string {
+	if m != nil {
+		return m.Path
+	}
+	return ""
+}
+
+type RegisterResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RegisterResponse) Reset()         { *m = RegisterResponse{} }
+func (m *RegisterResponse) String() string { return proto.CompactTextString(m) }
+func (*RegisterResponse) ProtoMessage()    {}
+func (*RegisterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_64215b76ff6c9221, []int{4}
+}
+
+func (m *RegisterResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RegisterResponse.Unmarshal(m, b)
+}
+func (m *RegisterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RegisterResponse.Marshal(b, m, deterministic)
+}
+func (m *RegisterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegisterResponse.Merge(m, src)
+}
+func (m *RegisterResponse) XXX_Size() int {
+	return xxx_messageInfo_RegisterResponse.Size(m)
+}
+func (m *RegisterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegisterResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegisterResponse proto.InternalMessageInfo
+
 func init() {
+	proto.RegisterEnum("mee6aas.agent.invoker.v1.RegisterMethod", RegisterMethod_name, RegisterMethod_value)
 	proto.RegisterType((*Activity)(nil), "mee6aas.agent.invoker.v1.Activity")
 	proto.RegisterType((*InvokeRequest)(nil), "mee6aas.agent.invoker.v1.InvokeRequest")
 	proto.RegisterType((*InvokeResponse)(nil), "mee6aas.agent.invoker.v1.InvokeResponse")
+	proto.RegisterType((*RegisterRequest)(nil), "mee6aas.agent.invoker.v1.RegisterRequest")
+	proto.RegisterType((*RegisterResponse)(nil), "mee6aas.agent.invoker.v1.RegisterResponse")
 }
 
 func init() { proto.RegisterFile("invoker.proto", fileDescriptor_64215b76ff6c9221) }
 
 var fileDescriptor_64215b76ff6c9221 = []byte{
-	// 218 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x31, 0x4b, 0xc5, 0x30,
-	0x14, 0x85, 0x7d, 0x8f, 0x67, 0x7c, 0x5e, 0xa9, 0xc3, 0x45, 0xa4, 0x74, 0x92, 0x2c, 0x76, 0x0a,
-	0xb4, 0x8a, 0x83, 0x9b, 0x6e, 0xae, 0x1d, 0x05, 0x87, 0x54, 0x2e, 0xb5, 0xd8, 0x26, 0x35, 0xb9,
-	0x0d, 0xf8, 0xef, 0x85, 0xa4, 0x15, 0x1c, 0x8a, 0xdb, 0x39, 0xc9, 0x39, 0xf9, 0x0e, 0x81, 0xac,
-	0x37, 0xc1, 0x7e, 0x92, 0x53, 0x93, 0xb3, 0x6c, 0x31, 0x1f, 0x89, 0x1e, 0xb4, 0xf6, 0x4a, 0x77,
-	0x64, 0x58, 0xad, 0x97, 0xa1, 0x92, 0xf7, 0x70, 0x7c, 0x7a, 0xe7, 0x3e, 0xf4, 0xfc, 0x8d, 0x08,
-	0x07, 0xa3, 0x47, 0xca, 0x77, 0x37, 0xbb, 0xf2, 0xbc, 0x89, 0x1a, 0xaf, 0xe0, 0x74, 0xd0, 0x2d,
-	0x0d, 0xf9, 0x3e, 0x1e, 0x26, 0x23, 0x3b, 0xc8, 0x5e, 0xe2, 0x1b, 0x0d, 0x7d, 0xcd, 0xe4, 0x19,
-	0x1f, 0x41, 0xb0, 0x76, 0x1d, 0x71, 0x2c, 0x5f, 0xd4, 0x52, 0x6d, 0x11, 0xd5, 0x8a, 0x6b, 0x96,
-	0x06, 0x16, 0x70, 0x9c, 0x3d, 0xb9, 0x88, 0x4e, 0x94, 0x5f, 0x2f, 0x4b, 0xb8, 0x5c, 0x41, 0x7e,
-	0xb2, 0xc6, 0x13, 0x5e, 0x83, 0x70, 0xe4, 0xe7, 0x81, 0x97, 0x99, 0x8b, 0xab, 0x3f, 0xe0, 0x2c,
-	0x25, 0x1d, 0xbe, 0x81, 0x48, 0x12, 0x6f, 0xb7, 0x67, 0xfc, 0xd9, 0x5f, 0x94, 0xff, 0x07, 0x13,
-	0x5f, 0x9e, 0x3c, 0x1f, 0x5e, 0xf7, 0xa1, 0x6a, 0x45, 0xfc, 0xd9, 0xbb, 0x9f, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0x70, 0x68, 0x7b, 0x8c, 0x6a, 0x01, 0x00, 0x00,
+	// 329 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xc1, 0x4e, 0xc2, 0x40,
+	0x10, 0x86, 0x29, 0x42, 0x85, 0x31, 0x60, 0x33, 0x31, 0xa6, 0xe1, 0x64, 0xf6, 0x62, 0xe5, 0xd0,
+	0x04, 0x30, 0x1e, 0x3c, 0x09, 0x1e, 0x8c, 0xb1, 0x42, 0xd2, 0xc4, 0x98, 0x98, 0x78, 0x58, 0x70,
+	0x52, 0x1a, 0xa1, 0xc5, 0xdd, 0xa5, 0x89, 0x67, 0x9f, 0xcf, 0x77, 0x32, 0x6c, 0xbb, 0x2a, 0x87,
+	0x06, 0x6e, 0x33, 0xb3, 0x33, 0xff, 0xff, 0xed, 0xec, 0x42, 0x2b, 0x4e, 0xb2, 0xf4, 0x9d, 0x84,
+	0xbf, 0x12, 0xa9, 0x4a, 0xd1, 0x5d, 0x12, 0x5d, 0x71, 0x2e, 0x7d, 0x1e, 0x51, 0xa2, 0x7c, 0x73,
+	0x98, 0xf5, 0xd8, 0x25, 0x34, 0x86, 0x33, 0x15, 0x67, 0xb1, 0xfa, 0x44, 0x84, 0x5a, 0xc2, 0x97,
+	0xe4, 0x5a, 0x67, 0x96, 0xd7, 0x0c, 0x75, 0x8c, 0x27, 0x50, 0x5f, 0xf0, 0x29, 0x2d, 0xdc, 0xaa,
+	0x2e, 0xe6, 0x09, 0x8b, 0xa0, 0x75, 0xaf, 0x35, 0x42, 0xfa, 0x58, 0x93, 0x54, 0xd8, 0x81, 0xc6,
+	0x5a, 0x92, 0xf8, 0x37, 0xfe, 0x9b, 0xe3, 0x35, 0xd8, 0x8a, 0x8b, 0x88, 0x94, 0xd6, 0x38, 0xea,
+	0x33, 0xbf, 0x8c, 0xc6, 0x37, 0x28, 0x61, 0x31, 0xc1, 0x3c, 0x68, 0x1b, 0x23, 0xb9, 0x4a, 0x13,
+	0x49, 0x78, 0x0a, 0xb6, 0x20, 0xb9, 0x5e, 0xa8, 0xc2, 0xa7, 0xc8, 0xd8, 0x97, 0x05, 0xc7, 0x21,
+	0x45, 0xb1, 0x54, 0x24, 0xf6, 0xa1, 0xba, 0x01, 0x7b, 0x49, 0x6a, 0x9e, 0xbe, 0x69, 0xaa, 0x76,
+	0xdf, 0x2b, 0xa7, 0x32, 0xb2, 0x8f, 0xba, 0x3f, 0x2c, 0xe6, 0x36, 0xeb, 0x5a, 0x71, 0x35, 0x77,
+	0x0f, 0xf2, 0x75, 0x6d, 0x62, 0x86, 0xe0, 0xfc, 0x41, 0xe4, 0xc4, 0xdd, 0x01, 0xb4, 0xb7, 0x15,
+	0x10, 0xc0, 0x7e, 0x1a, 0x3f, 0x4c, 0x9e, 0xc7, 0x4e, 0x05, 0x9b, 0x50, 0x0f, 0x26, 0xb7, 0xc3,
+	0xc0, 0xb1, 0x36, 0xe5, 0xbb, 0x60, 0x32, 0x1a, 0x06, 0x4e, 0xb5, 0xff, 0x6d, 0xc1, 0x61, 0x7e,
+	0x73, 0x81, 0xaf, 0x60, 0xe7, 0x21, 0x9e, 0x97, 0x43, 0x6e, 0xbd, 0x47, 0xc7, 0xdb, 0xdd, 0x98,
+	0xd3, 0xb1, 0x0a, 0xce, 0xa0, 0x61, 0xf8, 0xf0, 0x62, 0xf7, 0x16, 0x8c, 0x45, 0x77, 0x9f, 0x56,
+	0x63, 0x32, 0xaa, 0xbd, 0x54, 0xb3, 0xde, 0xd4, 0xd6, 0xdf, 0x71, 0xf0, 0x13, 0x00, 0x00, 0xff,
+	0xff, 0xd5, 0x61, 0x90, 0xf6, 0x9f, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -196,6 +320,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type InvokerClient interface {
 	Invoke(ctx context.Context, in *InvokeRequest, opts ...grpc.CallOption) (*InvokeResponse, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 }
 
 type invokerClient struct {
@@ -215,9 +340,19 @@ func (c *invokerClient) Invoke(ctx context.Context, in *InvokeRequest, opts ...g
 	return out, nil
 }
 
+func (c *invokerClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
+	out := new(RegisterResponse)
+	err := c.cc.Invoke(ctx, "/mee6aas.agent.invoker.v1.Invoker/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InvokerServer is the server API for Invoker service.
 type InvokerServer interface {
 	Invoke(context.Context, *InvokeRequest) (*InvokeResponse, error)
+	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 }
 
 // UnimplementedInvokerServer can be embedded to have forward compatible implementations.
@@ -226,6 +361,9 @@ type UnimplementedInvokerServer struct {
 
 func (*UnimplementedInvokerServer) Invoke(ctx context.Context, req *InvokeRequest) (*InvokeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Invoke not implemented")
+}
+func (*UnimplementedInvokerServer) Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 
 func RegisterInvokerServer(s *grpc.Server, srv InvokerServer) {
@@ -250,6 +388,24 @@ func _Invoker_Invoke_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Invoker_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InvokerServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mee6aas.agent.invoker.v1.Invoker/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InvokerServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Invoker_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "mee6aas.agent.invoker.v1.Invoker",
 	HandlerType: (*InvokerServer)(nil),
@@ -257,6 +413,10 @@ var _Invoker_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Invoke",
 			Handler:    _Invoker_Invoke_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _Invoker_Register_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

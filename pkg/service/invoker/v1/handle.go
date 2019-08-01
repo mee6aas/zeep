@@ -4,5 +4,6 @@ import "context"
 
 // InvokerAPIServerHandle handles server events.
 type InvokerAPIServerHandle interface {
-	Requested(context.Context, *InvokeRequest) (*InvokeResponse, error)
+	InvokeRequested(context.Context, *InvokeRequest) (*InvokeResponse, error)
+	RegisterRequested(context.Context, string, string) error
 }

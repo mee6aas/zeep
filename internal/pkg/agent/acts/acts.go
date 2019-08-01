@@ -1,23 +1,20 @@
 package acts
 
 import (
+	"io/ioutil"
 	"os"
-	"path/filepath"
+
+	"github.com/pkg/errors"
 
 	"github.com/mee6aas/zeep/pkg/activity"
-)
-
-const (
-	// DefaultRootDirPath indicates the path of directory that used by acts.
-	DefaultRootDirPath = "/usr/zeep/acts"
 )
 
 var (
 	isSetup     bool
 	rootDirPath string
 
-	//                username    actID
-	entries = make(map[string]map[string]activity.Activity)
+	//                   username    actID
+	activities = make(map[string]map[string]activity.Activity)
 )
 
 // TODO:
@@ -34,18 +31,6 @@ func RootDirPath() string { return rootDirPath }
 
 // Config holds the configuration for the acts.
 type Config struct {
-	// RootDirPath indicates the path of directory that used by acts.
-	RootDirPath string
-}
-
-func normalizeConfig(config Config) (c Config) {
-	c = config
-	c.RootDirPath = filepath.Clean(c.RootDirPath)
-	if c.RootDirPath == "" {
-		c.RootDirPath = DefaultRootDirPath
-	}
-
-	return
 }
 
 // Setup initializes acts root dir and initial activities.
@@ -54,12 +39,8 @@ func Setup(config Config) (e error) {
 		Destroy()
 	}
 
-	config = normalizeConfig(config)
-	rootDirPath = config.RootDirPath
-
-	if _, e = os.Stat(rootDirPath); os.IsNotExist(e) {
-		os.MkdirAll(rootDirPath, os.ModePerm)
-	} else if e != nil {
+	if rootDirPath, e = ioutil.TempDir("", ""); e != nil {
+		e = errors.Wrap(e, "Failed to create root directory")
 		return
 	}
 
@@ -74,8 +55,13 @@ func Destroy() (e error) {
 		return
 	}
 
+	if e = os.RemoveAll(rootDirPath); e != nil {
+		e = errors.Wrapf(e, "Failed to remove root directory")
+		return
+	}
+
 	rootDirPath = ""
-	entries = make(map[string]map[string]activity.Activity)
+	activities = make(map[string]map[string]activity.Activity)
 
 	isSetup = false
 

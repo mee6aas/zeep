@@ -15,7 +15,7 @@ func Remove(username string, actID string) (e error) {
 		acts map[string]activity.Activity
 	)
 
-	if acts, ok = entries[username]; !ok {
+	if acts, ok = activities[username]; !ok {
 		e = errors.New("Not found")
 		return
 	}

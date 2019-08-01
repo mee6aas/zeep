@@ -5,6 +5,7 @@ import (
 
 	"google.golang.org/grpc"
 
+	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
 	"github.com/mee6aas/zeep/internal/pkg/worker/pool"
 	server "github.com/mee6aas/zeep/pkg/protocol/grpc"
 
@@ -15,17 +16,24 @@ import (
 )
 
 // Serve starts services.
-func Serve(ctx context.Context, address string) (err error) {
+func Serve(ctx context.Context, address string) (e error) {
+
+	acts.Setup(acts.Config{})
+	defer func() {
+		if e := acts.Destroy(); e != nil {
+			// log warning
+		}
+	}()
 
 	// TODO: this config and opts are testing perposes.
-	if workerPool, err = pool.NewPool(ctx, pool.Config{
+	if workerPool, e = pool.NewPool(ctx, pool.Config{
 		Images: []string{"runtime-nodejs"},
 	},
 		pool.WithEachCPU(0),
 		pool.WithEachMem(0),
 		pool.WithMaxCPU(0),
 		pool.WithMaxMem(0),
-	); err != nil {
+	); e != nil {
 		return
 	}
 
@@ -38,7 +46,9 @@ func Serve(ctx context.Context, address string) (err error) {
 		invokerV1Handle{},
 	))
 
-	server.Serve(ctx, s, address)
+	if e = server.Serve(ctx, s, address); e != nil {
+		return
+	}
 
 	return
 }

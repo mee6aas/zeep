@@ -16,6 +16,6 @@ func (s *invokerAPIServer) Invoke(
 	ctx context.Context,
 	in *apiV1.InvokeRequest,
 ) (out *apiV1.InvokeResponse, err error) {
-	out, err = s.handle.Requested(ctx, in)
+	out, err = s.handle.InvokeRequested(ctx, in)
 	return
 }
