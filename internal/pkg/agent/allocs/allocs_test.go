@@ -15,16 +15,19 @@ func (m mockTaskAssigner) Assign(context.Context, interface{}) (err error) { ret
 func TestAllocs(t *testing.T) {
 	var (
 		ok bool
-		id = "Jerry"
-		v  = "C-137"
-		w  = worker.Worker{InvokeeVersion: v}
+
+		username = "Jerry"
+		actName  = "m6s"
+
+		v = "C-137"
+		w = worker.Worker{InvokeeVersion: v}
 	)
 
-	if ok = allocs.Add(id, w); ok {
+	if ok = allocs.Add(username, actName, w); ok {
 		t.Fatal("Expected to fail to add worker")
 	}
 
-	if _, ok = allocs.Take(id); ok {
+	if _, ok = allocs.Take(username, actName); ok {
 		t.Fatal("Expected to fail to take worker")
 	}
 
@@ -32,11 +35,11 @@ func TestAllocs(t *testing.T) {
 		t.Fatal("Failed to allocate a worker")
 	}
 
-	if ok = allocs.Add(id, w); !ok {
+	if ok = allocs.Add(username, actName, w); !ok {
 		t.Fatal("Expected to add worker")
 	}
 
-	if w, ok = allocs.Take(id); !ok {
+	if w, ok = allocs.Take(username, actName); !ok {
 		t.Fatal("Expected to take worker")
 	}
 

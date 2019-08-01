@@ -2,6 +2,7 @@ package v1_test
 
 import (
 	"context"
+	"fmt"
 
 	v1 "github.com/mee6aas/zeep/pkg/service/invoker/v1"
 )
@@ -11,10 +12,11 @@ type mockHandle struct {
 
 func (h *mockHandle) InvokeRequested(
 	_ context.Context,
-	in *v1.InvokeRequest,
+	username string,
+	actName string,
+	actLabel string,
 ) (out *v1.InvokeResponse, err error) {
-	act := in.GetTarget()
-	out = &v1.InvokeResponse{Result: act.GetName() + "@" + act.GetLabel()}
+	out = &v1.InvokeResponse{Result: fmt.Sprintf("%s@%s by %s", actName, actLabel, username)}
 	return
 }
 

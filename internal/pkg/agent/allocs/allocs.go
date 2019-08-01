@@ -5,6 +5,6 @@ import (
 )
 
 var (
-	//                actID
-	allocs = make(map[string][]worker.Worker)
+	//               usernmae   actName
+	allocs = make(map[string]map[string][]worker.Worker)
 )

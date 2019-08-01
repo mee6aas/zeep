@@ -10,7 +10,7 @@ import (
 )
 
 // Add inserts activity to collection with given username and id.
-func Add(username string, actID string, actDirPath string) (e error) {
+func Add(username string, actName string, actDirPath string) (e error) {
 	if !IsSetup() {
 		e = errors.New("Acts not setup")
 		return
@@ -26,9 +26,7 @@ func Add(username string, actID string, actDirPath string) (e error) {
 		return
 	}
 
-	act.ID = actID
-
-	if e = copy.Copy(actDirPath, filepath.Join(rootDirPath, actID)); e != nil {
+	if e = copy.Copy(actDirPath, filepath.Join(rootDirPath, username, actName)); e != nil {
 		return
 	}
 
@@ -36,7 +34,7 @@ func Add(username string, actID string, actDirPath string) (e error) {
 		acts = make(map[string]activity.Activity)
 	}
 
-	acts[actID] = act
+	acts[actName] = act
 	activities[username] = acts
 
 	return

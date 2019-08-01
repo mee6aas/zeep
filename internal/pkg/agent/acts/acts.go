@@ -13,7 +13,7 @@ var (
 	isSetup     bool
 	rootDirPath string
 
-	//                   username    actID
+	//                   username   actName
 	activities = make(map[string]map[string]activity.Activity)
 )
 

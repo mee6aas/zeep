@@ -37,7 +37,7 @@ func TestMain(m *testing.M) {
 
 	go grpcServer.Serve(ctxTestServer, testGrpcServer, testServerAddress)
 
-	if testConn, err = grpc.Dial(testServerAddress, grpc.WithInsecure()); err != nil {
+	if testConn, err = grpc.Dial(testServerAddress, grpc.WithInsecure(), grpc.WithWaitForHandshake()); err != nil {
 		panic(err)
 	}
 

@@ -12,8 +12,4 @@ type Activity struct {
 
 	// Runtime specifies the runtime for this activity.
 	Runtime string `json:"runtime"`
-
-	// ID represents the ID of this activity.
-	// This field managed by agent.
-	ID string `json:"-"`
 }

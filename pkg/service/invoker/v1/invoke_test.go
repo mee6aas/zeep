@@ -20,6 +20,7 @@ func TestInvoke(t *testing.T) {
 	defer cc()
 
 	if res, err = testClient.Invoke(ctx, &v1.InvokeRequest{
+		Username: "Rick",
 		Target: &v1.Activity{
 			Name:  "Zeep",
 			Label: "C-137",
@@ -28,7 +29,7 @@ func TestInvoke(t *testing.T) {
 		t.Fatalf("failed to request to invoke: %v", err)
 	}
 
-	if res.GetResult() != "Zeep@C-137" {
+	if res.GetResult() != "Zeep@C-137 by Rick" {
 		t.Fatalf("Undesired result")
 	}
 }

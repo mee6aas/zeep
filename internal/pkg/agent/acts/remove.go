@@ -8,8 +8,8 @@ import (
 	"github.com/mee6aas/zeep/pkg/activity"
 )
 
-// Remove deletes activity from collection with specified username and ID.
-func Remove(username string, actID string) (e error) {
+// Remove deletes activity from collection with given username and actName.
+func Remove(username string, actName string) (e error) {
 	var (
 		ok   bool
 		acts map[string]activity.Activity
@@ -20,11 +20,11 @@ func Remove(username string, actID string) (e error) {
 		return
 	}
 
-	if e = os.RemoveAll(filepath.Join(rootDirPath, actID)); e != nil {
+	if e = os.RemoveAll(filepath.Join(rootDirPath, actName)); e != nil {
 		return
 	}
 
-	delete(acts, actID)
+	delete(acts, actName)
 
 	return
 }

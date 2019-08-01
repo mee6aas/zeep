@@ -27,10 +27,10 @@ func TestAddAndRemove(t *testing.T) {
 		err error
 
 		username = "Jerry"
-		actID    = "golf"
+		actName  = "golf"
 	)
 
-	if err = acts.Add(username, actID, "./testdata/valid"); err == nil {
+	if err = acts.Add(username, actName, "./testdata/valid"); err == nil {
 		t.Fatalf("Expected to fail to add activity")
 	}
 
@@ -44,15 +44,15 @@ func TestAddAndRemove(t *testing.T) {
 		}
 	}()
 
-	if err = acts.Add(username, actID, "./testdata/valid"); err != nil {
+	if err = acts.Add(username, actName, "./testdata/valid"); err != nil {
 		t.Fatalf("Failed to add activity")
 	}
 
-	if _, err = os.Stat(filepath.Join(acts.RootDirPath(), actID)); os.IsNotExist(err) {
-		t.Fatalf("Expected that the activity is added at %s", filepath.Join(acts.RootDirPath(), actID))
+	if _, err = os.Stat(filepath.Join(acts.RootDirPath(), username, actName)); os.IsNotExist(err) {
+		t.Fatalf("Expected that the activity is added at %s", filepath.Join(acts.RootDirPath(), username, actName))
 	}
 
-	if err = acts.Remove(username, actID); err != nil {
+	if err = acts.Remove(username, actName); err != nil {
 		t.Fatalf("Failed to remove activity")
 	}
 }
