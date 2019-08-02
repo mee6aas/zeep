@@ -1,6 +1,7 @@
 package acts
 
 import (
+	"context"
 	"io/ioutil"
 	"os"
 
@@ -13,6 +14,7 @@ var (
 	isSetup     bool
 	rootDirPath string
 
+	// activities holds activity manifest.
 	//                   username   actName
 	activities = make(map[string]map[string]activity.Activity)
 )
@@ -33,10 +35,10 @@ func RootDirPath() string { return rootDirPath }
 type Config struct {
 }
 
-// Setup initializes acts root dir and initial activities.
+// Setup initializes acts.
 func Setup(config Config) (e error) {
 	if IsSetup() {
-		Destroy()
+		return
 	}
 
 	if rootDirPath, e = ioutil.TempDir("", ""); e != nil {
@@ -50,7 +52,7 @@ func Setup(config Config) (e error) {
 }
 
 // Destroy removes acts resources.
-func Destroy() (e error) {
+func Destroy(_ context.Context) (e error) {
 	if !IsSetup() {
 		return
 	}

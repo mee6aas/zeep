@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	. "github.com/mee6aas/zeep/internal/pkg/storage"
@@ -88,5 +89,70 @@ func TestStorageCreateWithoutQuota(t *testing.T) {
 
 	if _, err := io.CopyN(trg, rand.Reader, int64(testStorageQuota*100)); err != nil {
 		t.Fatalf("expected to create %d size file: %v", testStorageQuota, err)
+	}
+}
+
+func TestBind(t *testing.T) {
+	if testStorageCreateFailed {
+		t.Skipf("TestStorageCreate failed")
+	}
+
+	const (
+		testDir = "miniverse"
+	)
+
+	var (
+		err error
+		src Storage
+		trg string
+		rst Storage
+	)
+
+	if src, err = NewStorage(Config{}); err != nil {
+		t.Fatalf("failed to create storage: %v", err)
+	}
+
+	if trg, err = ioutil.TempDir("", ""); err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+
+	if rst, err = Bind(trg, src.Path(), 0); err != nil {
+		t.Fatalf("failed to bind: %v", err)
+	}
+
+	if err = os.Mkdir(filepath.Join(trg, testDir), os.ModePerm); err != nil {
+		t.Fatalf("failed to create test dir: %v", err)
+	}
+
+	if _, err = os.Stat(filepath.Join(src.Path(), testDir)); err != nil {
+		p := filepath.Join(src.Path(), testDir)
+		if os.IsNotExist(err) {
+			t.Fatalf("expected that the %s exists", p)
+		}
+		t.Fatalf("failed to stat %s: %v", p, err)
+	}
+
+	if _, err = os.Stat(filepath.Join(trg, testDir)); err != nil {
+		p := filepath.Join(trg, testDir)
+		if os.IsNotExist(err) {
+			t.Fatalf("expected that the %s exists", p)
+		}
+		t.Fatalf("failed to stat %s: %v", p, err)
+	}
+
+	if err = os.RemoveAll(trg); err == nil {
+		t.Fatalf("expected that fail to remove %s", trg)
+	}
+
+	if err = src.Remove(); err != nil {
+		t.Fatalf("failed to remove %s: %v", src.Path(), err)
+	}
+
+	if err = rst.Remove(); err != nil {
+		t.Fatalf("failed to remove %s: %v", rst.Path(), err)
+	}
+
+	if err = os.RemoveAll(trg); err != nil {
+		t.Fatalf("failed to remove %s: %v", trg, err)
 	}
 }

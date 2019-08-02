@@ -51,14 +51,20 @@ func (h invokerV1Handle) InvokeRequested(
 			return
 		}
 
+		// already checked if the username exists
+		actP, _ := acts.PathOf(username)
+		// bind activity resources
+		w.AddActs(actP)
+
+		loadID, c := assigns.Add()
+
 		// warming worker
-		// TODO: move activity resource to container
-		// w.Load(username + "/" + actName)?
 		if e = w.Assign(ctx, invokeeV1API.Task{
-			Id:   username + "/" + actName,
+			Id:   loadID,
 			Type: invokeeV1API.TaskType_LOAD,
+			Arg:  username + "/" + actName,
 		}); e != nil {
-			e = errors.Wrap(e, "Worker failed to load activity")
+			e = errors.Wrap(e, "Failed to assign load task to worker")
 
 			defer func() {
 				ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
@@ -70,6 +76,14 @@ func (h invokerV1Handle) InvokeRequested(
 			}()
 
 			return
+		}
+
+		// wait load task finished
+		rst := <-c
+
+		// deallocated while invocation
+		if rst == nil {
+			// TODO:
 		}
 	}
 
@@ -90,6 +104,7 @@ func (h invokerV1Handle) InvokeRequested(
 
 	// deallocated while invocation
 	if rst == nil {
+		// TODO:
 	}
 
 	// TODO: implement version converter

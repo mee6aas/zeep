@@ -1,6 +1,7 @@
 package acts_test
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -17,7 +18,7 @@ func TestSetUpAndDestory(t *testing.T) {
 		t.Fatalf("Failed to setup acts: %v", err)
 	}
 
-	if err = acts.Destroy(); err != nil {
+	if err = acts.Destroy(context.Background()); err != nil {
 		t.Fatalf("Failed to destory acts: %v", err)
 	}
 }
@@ -39,7 +40,7 @@ func TestAddAndRemove(t *testing.T) {
 	}
 
 	defer func() {
-		if e := acts.Destroy(); e != nil {
+		if e := acts.Destroy(context.Background()); e != nil {
 			t.Logf("Failed to destroy acts: %v", e)
 		}
 	}()

@@ -2,10 +2,14 @@ package worker
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 
+	"github.com/pkg/errors"
+
+	"github.com/mee6aas/zeep/api"
 	"github.com/mee6aas/zeep/internal/pkg/container"
 	"github.com/mee6aas/zeep/internal/pkg/storage"
-	"github.com/pkg/errors"
 )
 
 // Worker describes worker.
@@ -48,28 +52,31 @@ type Config struct {
 
 // NewWorker creates a new worker based on the given configuration
 // and returns its descriptor.
-func NewWorker(ctx context.Context, config Config) (worker Worker, err error) {
+func NewWorker(ctx context.Context, config Config) (worker Worker, e error) {
 	var (
-		stor storage.Storage
+		sto  storage.Storage
 		cont container.Container
 	)
 
-	if stor, err = storage.NewStorage(storage.Config{Size: config.Size}); err != nil {
-		err = errors.Wrap(err, "Failed to create storage")
+	if sto, e = storage.NewStorage(storage.Config{Size: config.Size}); e != nil {
+		e = errors.Wrap(e, "Failed to create storage")
 		return
 	}
 
-	if cont, err = container.NewContainer(ctx, container.Config{
+	os.Mkdir(filepath.Join(sto.Path(), filepath.Base(api.ActivityResource)), 755)
+	// os.Mkdir(filepath.Join(sto.Path(), filepath.Base(api.WorkflowStorage)), 755)
+
+	if cont, e = container.NewContainer(ctx, container.Config{
 		Image:   config.Image,
-		Storage: stor.Path(),
-	}); err != nil {
-		stor.Remove()
-		err = errors.Wrap(err, "Failed to create container")
+		Storage: sto.Path(),
+	}); e != nil {
+		sto.Remove()
+		e = errors.Wrap(e, "Failed to create container")
 		return
 	}
 
 	worker.container = cont
-	worker.storage = stor
+	worker.storage = sto
 
 	return
 }
