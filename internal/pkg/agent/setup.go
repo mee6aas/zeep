@@ -24,7 +24,7 @@ func Setup(ctx context.Context, conf Config) (e error) {
 	}
 
 	// TODO: this config and opts are testing perposes.
-	if workerPool, e = pool.NewPool(ctx, conf.Pool,
+	if WorkerPool, e = pool.NewPool(ctx, conf.Pool,
 		pool.WithEachCPU(0),
 		pool.WithEachMem(0),
 		pool.WithMaxCPU(0),

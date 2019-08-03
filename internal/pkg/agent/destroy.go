@@ -17,7 +17,7 @@ func Destroy(ctx context.Context) (e error) {
 		e = errors.Wrap(err, "Failed to destory acts")
 	}
 
-	if err := workerPool.Destroy(ctx); err != nil {
+	if err := WorkerPool.Destroy(ctx); err != nil {
 		e = errors.Wrap(err, "Failed to destory pool")
 	}
 

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	testServerAddress = "localhost:5122"
+	testServerAddress = "localhost:5123"
 )
 
 var (
@@ -37,7 +37,7 @@ func TestMain(m *testing.M) {
 
 	go grpcServer.Serve(ctxTestServer, testGrpcServer, testServerAddress)
 
-	if testConn, err = grpc.Dial(testServerAddress, grpc.WithInsecure(), grpc.WithWaitForHandshake()); err != nil {
+	if testConn, err = grpc.Dial(testServerAddress, grpc.WithInsecure()); err != nil {
 		panic(err)
 	}
 

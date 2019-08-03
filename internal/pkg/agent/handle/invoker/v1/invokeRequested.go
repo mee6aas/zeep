@@ -1,4 +1,4 @@
-package agent
+package v1
 
 import (
 	"context"
@@ -11,13 +11,12 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/agent/assigns"
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 	"github.com/mee6aas/zeep/pkg/activity"
+
 	invokeeV1API "github.com/mee6aas/zeep/pkg/api/invokee/v1"
 	invokerV1 "github.com/mee6aas/zeep/pkg/service/invoker/v1"
 )
 
-type invokerV1Handle struct{}
-
-func (h invokerV1Handle) InvokeRequested(
+func (h Handle) InvokeRequested(
 	ctx context.Context,
 	username string,
 	actName string,
@@ -41,7 +40,7 @@ func (h invokerV1Handle) InvokeRequested(
 	// get worker
 	if w, ok = allocs.Take(username, actName); !ok {
 		// warm worker not exists
-		if w, e = workerPool.Fetch(ctx, a.Runtime); e != nil {
+		if w, e = h.WorkerPool.Fetch(ctx, a.Runtime); e != nil {
 			// TODO: provide details of error
 			// possible reasons
 			//	- runtime not provided by pool
@@ -125,21 +124,6 @@ func (h invokerV1Handle) InvokeRequested(
 			}
 		}()
 	}
-
-	return
-}
-
-func (h invokerV1Handle) RegisterRequested(
-	_ context.Context,
-	username string,
-	actDirPath string,
-) (e error) {
-	var (
-		a activity.Activity
-	)
-
-	a, e = activity.UnmarshalFromDir(actDirPath)
-	e = acts.Add(username, a.Name, actDirPath)
 
 	return
 }

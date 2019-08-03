@@ -11,6 +11,9 @@ import (
 	invokerV1API "github.com/mee6aas/zeep/pkg/api/invoker/v1"
 	invokeeV1Svc "github.com/mee6aas/zeep/pkg/service/invokee/v1"
 	invokerV1Svc "github.com/mee6aas/zeep/pkg/service/invoker/v1"
+
+	invokeeV1Handle "github.com/mee6aas/zeep/internal/pkg/agent/handle/invokee/v1"
+	invokerV1Handle "github.com/mee6aas/zeep/internal/pkg/agent/handle/invoker/v1"
 )
 
 // Serve starts services.
@@ -18,10 +21,14 @@ func Serve(ctx context.Context, address string) (e error) {
 	s := grpc.NewServer()
 
 	invokeeV1API.RegisterInvokeeServer(s, invokeeV1Svc.NewInvokeeAPIServer(
-		invokeeV1Handle{},
+		invokeeV1Handle.Handle{
+			WorkerPool: &WorkerPool,
+		},
 	))
 	invokerV1API.RegisterInvokerServer(s, invokerV1Svc.NewInvokerAPIServer(
-		invokerV1Handle{},
+		invokerV1Handle.Handle{
+			WorkerPool: &WorkerPool,
+		},
 	))
 
 	if e = server.Serve(ctx, s, address); e != nil {
