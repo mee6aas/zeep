@@ -8,6 +8,7 @@ import (
 	v1 "github.com/mee6aas/zeep/pkg/api/invokee/v1"
 )
 
+// Connected is invoked when invokee client connected.
 func (h Handle) Connected(
 	ctx context.Context,
 	addr *net.TCPAddr,
@@ -20,6 +21,7 @@ func (h Handle) Connected(
 
 	if !ok {
 		e = errors.New("Invalid connection")
+		return
 	}
 
 	return

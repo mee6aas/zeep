@@ -14,6 +14,9 @@ func (p *Pool) alloc(ctx context.Context, image string) (e error) {
 		w  worker.Worker
 	)
 
+	p.wg.Add(1)
+	defer p.wg.Done()
+
 	for _, img := range p.images {
 		ok = img == image
 	}

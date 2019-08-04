@@ -7,6 +7,7 @@ import (
 	"github.com/mee6aas/zeep/pkg/activity"
 )
 
+// RegisterRequested is invoked when the invoker requests an activity registration.
 func (h Handle) RegisterRequested(
 	_ context.Context,
 	username string,

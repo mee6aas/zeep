@@ -16,6 +16,7 @@ message Activity {
 message InvokeRequest {
     string username = 1;
     Activity target = 2;
+    string arg = 3;
 }
 
 message InvokeResponse {

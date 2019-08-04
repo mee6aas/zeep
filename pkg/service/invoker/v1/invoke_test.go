@@ -25,11 +25,12 @@ func TestInvoke(t *testing.T) {
 			Name:  "Zeep",
 			Label: "C-137",
 		},
+		Arg: "Peace",
 	}); err != nil {
 		t.Fatalf("failed to request to invoke: %v", err)
 	}
 
-	if res.GetResult() != "Zeep@C-137 by Rick" {
+	if res.GetResult() != "Zeep@C-137 by Rick with Peace" {
 		t.Fatalf("Undesired result")
 	}
 }

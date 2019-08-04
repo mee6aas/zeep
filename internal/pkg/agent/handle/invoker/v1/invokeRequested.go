@@ -16,11 +16,13 @@ import (
 	invokerV1 "github.com/mee6aas/zeep/pkg/service/invoker/v1"
 )
 
+// InvokeRequested is invoked when the invoker requests an activity invoke.
 func (h Handle) InvokeRequested(
 	ctx context.Context,
 	username string,
 	actName string,
 	actLabel string,
+	arg string,
 ) (
 	res *invokerV1.InvokeResponse,
 	e error,
@@ -93,6 +95,7 @@ func (h Handle) InvokeRequested(
 	if e = w.Assign(ctx, invokeeV1API.Task{
 		Id:   invID,
 		Type: invokeeV1API.TaskType_INVOKE,
+		Arg:  arg,
 	}); e != nil {
 		e = errors.Wrap(e, "Failed to assign task to worker")
 		return
@@ -106,9 +109,14 @@ func (h Handle) InvokeRequested(
 		// TODO:
 	}
 
-	// TODO: implement version converter
-	// but it is ok currently because there is only v1.
-	res, _ = rst.(*invokerV1.InvokeResponse)
+	switch r := rst.(type) {
+	case *invokeeV1API.ReportRequest:
+		res = &invokerV1.InvokeResponse{
+			Result: r.GetResult(),
+		}
+	default:
+		panic(errors.Errorf("Unrecognized report request %v", rst))
+	}
 
 	// resolve worker
 	w.Resolve()

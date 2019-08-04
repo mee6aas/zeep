@@ -7,7 +7,7 @@ import (
 var (
 	isSetup bool
 
-	// WorkerPool is set of idle workers
+	// workerPool is set of idle workers
 	// TODO: make it configurable
-	WorkerPool pool.Pool
+	workerPool pool.Pool
 )

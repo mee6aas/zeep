@@ -22,12 +22,12 @@ func Serve(ctx context.Context, address string) (e error) {
 
 	invokeeV1API.RegisterInvokeeServer(s, invokeeV1Svc.NewInvokeeAPIServer(
 		invokeeV1Handle.Handle{
-			WorkerPool: &WorkerPool,
+			WorkerPool: &workerPool,
 		},
 	))
 	invokerV1API.RegisterInvokerServer(s, invokerV1Svc.NewInvokerAPIServer(
 		invokerV1Handle.Handle{
-			WorkerPool: &WorkerPool,
+			WorkerPool: &workerPool,
 		},
 	))
 

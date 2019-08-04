@@ -17,7 +17,7 @@ var (
 
 	testEngineClient         *docker.Client
 	testContainer            Container
-	testContainerImage       = "golang:1.12"
+	testContainerImage       = "mee6aas/test:latest"
 	testContainerStoragePath string
 )
 

@@ -17,6 +17,11 @@ func (s *invokerAPIServer) Invoke(
 	in *apiV1.InvokeRequest,
 ) (out *apiV1.InvokeResponse, err error) {
 	trg := in.GetTarget()
-	out, err = s.handle.InvokeRequested(ctx, in.GetUsername(), trg.GetName(), trg.GetLabel())
+	out, err = s.handle.InvokeRequested(ctx,
+		in.GetUsername(),
+		trg.GetName(),
+		trg.GetLabel(),
+		in.GetArg(),
+	)
 	return
 }

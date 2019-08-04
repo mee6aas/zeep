@@ -10,12 +10,21 @@ import (
 
 // Destroy deletes all workers in the pool and stops prewarming.
 func (p *Pool) Destroy(ctx context.Context) (err error) {
+	// I think cancel should be first
+	//  but that makes removing container fail.
+	// So I wait first, but still there is a possibility
+	//  that `alloc` called after the wait finished in multithread environment.
+	// TODO: resolve it
+	//  destoried flag maybe useful
+	p.wg.Wait()
+	p.cancel()
+
 	ws := p.Entries()
 	granted := p.granted
 
-	p.images = []string{}
-	p.pendings = map[string]worker.Worker{}
-	p.granted = map[string](chan worker.Worker){}
+	p.images = make([]string, 0)
+	p.pendings = make(map[string]worker.Worker)
+	p.granted = make(map[string](chan worker.Worker))
 
 	failed := []string{}
 

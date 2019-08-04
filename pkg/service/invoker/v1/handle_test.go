@@ -15,8 +15,9 @@ func (h *mockHandle) InvokeRequested(
 	username string,
 	actName string,
 	actLabel string,
+	arg string,
 ) (out *v1.InvokeResponse, err error) {
-	out = &v1.InvokeResponse{Result: fmt.Sprintf("%s@%s by %s", actName, actLabel, username)}
+	out = &v1.InvokeResponse{Result: fmt.Sprintf("%s@%s by %s with %s", actName, actLabel, username, arg)}
 	return
 }
 

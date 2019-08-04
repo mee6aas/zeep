@@ -2,6 +2,7 @@ package pool
 
 import (
 	"context"
+	"sync"
 
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
@@ -20,6 +21,11 @@ type Pool struct {
 
 	//          image
 	granted map[string](chan worker.Worker)
+
+	// used to destory gracefully
+	wg     *sync.WaitGroup
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
 // Config holds the configuration for the pool.
@@ -33,8 +39,8 @@ func NewPool(
 	config Config,
 	setters ...Option,
 ) (
-	pool Pool,
-	err error,
+	p Pool,
+	e error,
 ) {
 	args := Options{
 		eachCPU: 1,
@@ -49,10 +55,10 @@ func NewPool(
 
 	granted := make(map[string](chan worker.Worker))
 	for _, image := range config.Images {
-		granted[image] = make(chan worker.Worker, 1)
+		granted[image] = make(chan worker.Worker)
 	}
 
-	pool = Pool{
+	p = Pool{
 		images: config.Images,
 		option: args,
 
@@ -61,11 +67,15 @@ func NewPool(
 
 		pendings: make(map[string]worker.Worker),
 		granted:  granted,
+
+		wg: &sync.WaitGroup{},
 	}
+	p.ctx, p.cancel = context.WithCancel(context.Background())
 
 	for _, image := range config.Images {
 		// TODO: go and wait
-		if err = pool.alloc(ctx, image); err != nil {
+		if e = p.alloc(ctx, image); e != nil {
+			p.cancel()
 			return
 		}
 	}

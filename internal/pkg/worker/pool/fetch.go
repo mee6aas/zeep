@@ -36,7 +36,7 @@ func (p *Pool) Fetch(ctx context.Context, image string) (w worker.Worker, e erro
 		return
 	}
 
-	go p.alloc(context.Background(), image)
+	go p.alloc(p.ctx, image)
 
 	return
 }
