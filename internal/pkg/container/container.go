@@ -2,6 +2,7 @@ package container
 
 import (
 	"context"
+	"os"
 
 	"github.com/mee6aas/zeep/api"
 
@@ -53,7 +54,10 @@ func NewContainer(ctx context.Context, config Config) (cont Container, err error
 
 	if res, err = engineClient.ContainerCreate(ctx, &dockerCont.Config{
 		Image: config.Image,
-		Env:   []string{},
+		Env: []string{
+			"AGENT_HOST=" + os.Getenv("AGENT_HOST"),
+			"AGENT_PORT=" + os.Getenv("AGENT_PORT"),
+		},
 	}, &dockerCont.HostConfig{
 		NetworkMode: api.NetworkName,
 		Mounts: []dockerMnt.Mount{

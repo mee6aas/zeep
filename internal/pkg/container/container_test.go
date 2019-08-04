@@ -17,7 +17,7 @@ var (
 
 	testEngineClient         *docker.Client
 	testContainer            Container
-	testContainerImage       = "mee6aas/test:latest"
+	testContainerImage       = "mee6aas/runtime-test:latest"
 	testContainerStoragePath string
 )
 

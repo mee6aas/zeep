@@ -41,7 +41,7 @@ func (p *Pool) alloc(ctx context.Context, image string) (e error) {
 		return
 	}
 
-	p.pendings[w.Container().IP()] = w
+	p.pendings[c.IP()] = w
 
 	// TODO: update used* fields
 

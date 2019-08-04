@@ -11,7 +11,7 @@ import (
 )
 
 // Start starts this container.
-func (c Container) Start(ctx context.Context) (err error) {
+func (c *Container) Start(ctx context.Context) (err error) {
 	var (
 		ok   bool
 		info types.ContainerJSON

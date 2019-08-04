@@ -27,7 +27,7 @@ func TestSetup(t *testing.T) {
 
 	if err := agent.Setup(ctx, agent.Config{
 		Acts: acts.Config{},
-		Pool: pool.Config{Images: []string{"mee6aas/test:latest"}},
+		Pool: pool.Config{Images: []string{"mee6aas/runtime-test:latest"}},
 	}); err != nil {
 		t.Fatalf("Failed to setup agent: %v", err)
 		testSetupFailed = true

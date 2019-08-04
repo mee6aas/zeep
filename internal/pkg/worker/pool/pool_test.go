@@ -14,7 +14,7 @@ type mockTA struct{}
 func (ta mockTA) Assign(context.Context, interface{}) (err error) { return }
 
 var (
-	testImage = "mee6aas/test:latest"
+	testImage = "mee6aas/runtime-test:latest"
 	testPool  pool.Pool
 
 	testNewPoolFailed = false

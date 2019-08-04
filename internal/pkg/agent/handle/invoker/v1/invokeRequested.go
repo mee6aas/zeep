@@ -63,7 +63,7 @@ func (h Handle) InvokeRequested(
 		if e = w.Assign(ctx, invokeeV1API.Task{
 			Id:   loadID,
 			Type: invokeeV1API.TaskType_LOAD,
-			Arg:  username + "/" + actName,
+			Arg:  actName,
 		}); e != nil {
 			e = errors.Wrap(e, "Failed to assign load task to worker")
 

@@ -21,7 +21,7 @@ func TestUnmarshalFromFile(t *testing.T) {
 		t.Fatalf("Expected that the name is meeseeks but %s", n)
 	}
 
-	if r := a.Runtime; r != "mee6aas/nodejs" {
+	if r := a.Runtime; r != "mee6aas/runtime-nodejs" {
 		t.Fatalf("Expected that the runtime is mee6aas/nodejs but %s", r)
 	}
 }
@@ -39,7 +39,7 @@ func TestUnmarshalFromDir(t *testing.T) {
 		t.Fatalf("Expected that the name is meeseeks but %s", n)
 	}
 
-	if r := a.Runtime; r != "mee6aas/nodejs" {
+	if r := a.Runtime; r != "mee6aas/runtime-nodejs" {
 		t.Fatalf("Expected that the runtime is mee6aas/nodejs but %s", r)
 	}
 }

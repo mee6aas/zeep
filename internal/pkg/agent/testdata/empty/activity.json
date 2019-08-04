@@ -1,4 +1,4 @@
 {
     "name": "empty",
-    "runtime": "mee6aas/test:latest"
+    "runtime": "test:latest"
 }

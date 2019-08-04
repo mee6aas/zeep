@@ -18,7 +18,7 @@ import (
 	mockInvoker "github.com/mee6aas/zeep/internal/pkg/agent/mock/invoker"
 )
 
-func TestIntegration(t *testing.T) {
+func TestIntegrationWithMock(t *testing.T) {
 	const (
 		testUsername    = "Jerry"
 		testActName     = "empty"
@@ -36,7 +36,7 @@ func TestIntegration(t *testing.T) {
 
 	if err := agent.Setup(ctx, agent.Config{
 		Acts: acts.Config{},
-		Pool: pool.Config{Images: []string{"mee6aas/test:latest"}},
+		Pool: pool.Config{Images: []string{"mee6aas/runtime-test:latest"}},
 	}); err != nil {
 		t.Fatalf("Failed to setup agent: %v", err)
 	}
@@ -125,5 +125,63 @@ func TestIntegration(t *testing.T) {
 			testExpectedRst,
 			testRst,
 		)
+	}
+}
+
+func TestIntegration(t *testing.T) {
+	const (
+		testAddr        = "172.17.0.1:5120" // docker default ip
+		testUsername    = "Rick"
+		testActName     = "echo"
+		testActDirPath  = "./testdata/echo"
+		testActArg      = "I'm Mr. Meeseeks! Look at me!"
+		testExpectedRst = "\"I'm Mr. Meeseeks! Look at me!\"" // TODO: reconsider the schema. it should be properly wrapped by {}
+	)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	if err := agent.Setup(ctx, agent.Config{
+		AccessPoint: testAddr,
+
+		Acts: acts.Config{},
+		Pool: pool.Config{Images: []string{"mee6aas/runtime-nodejs"}},
+	}); err != nil {
+		t.Fatalf("Failed to setup agent: %v", err)
+	}
+
+	go func() {
+		if err := agent.Serve(ctx, testAddr); err != nil {
+			t.Logf("Failed to Serve agent")
+		}
+	}()
+	defer func() {
+		if err := agent.Destroy(ctx); err != nil {
+			t.Logf("Failed to destory agent: %v", err)
+		}
+	}()
+
+	invker := mockInvoker.Invoker{}
+	defer invker.Close()
+
+	if err := invker.Connect(testAddr); err != nil {
+		t.Fatalf("Failed to connect to invoker service: %v", err)
+	}
+
+	if err := invker.Register(ctx, testUsername, testActDirPath); err != nil {
+		t.Fatalf("Failed to request for register an activity to agent: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 100)
+
+	if rst, err := invker.Invoke(ctx, testUsername, testActName, testActArg); err == nil {
+		if rst != testExpectedRst {
+			t.Fatalf("Expected that the result is %s but is %s",
+				testExpectedRst,
+				rst,
+			)
+		}
+	} else {
+		t.Fatalf("Failed to invoke an activity: %v", err)
 	}
 }
