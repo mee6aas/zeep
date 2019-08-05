@@ -15,9 +15,9 @@ type InvokeResponse = apiV1.InvokeResponse
 func (s *invokerAPIServer) Invoke(
 	ctx context.Context,
 	in *apiV1.InvokeRequest,
-) (out *apiV1.InvokeResponse, err error) {
+) (out *apiV1.InvokeResponse, e error) {
 	trg := in.GetTarget()
-	out, err = s.handle.InvokeRequested(ctx,
+	out, e = s.handle.InvokeRequested(ctx,
 		in.GetUsername(),
 		trg.GetName(),
 		trg.GetLabel(),

@@ -67,12 +67,7 @@ func TestFetch(t *testing.T) {
 	if w, err = testPool.Fetch(ctx, testImage); err != nil {
 		t.Fatalf("Failed to fetch worker from pool: %v", err)
 	}
-
-	defer func() {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-		defer cancel()
-		w.Remove(ctx)
-	}()
+	defer w.RemoveDetach(ctx)
 
 	if !w.Container().IsExists(ctx) {
 		t.Fatal("Expected that the container exists.")

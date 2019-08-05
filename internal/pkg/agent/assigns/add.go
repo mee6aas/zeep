@@ -9,16 +9,16 @@ import (
 func Add() (invkID string, c chan interface{}) {
 	var (
 		err error
-		uid uuid.UUID
+		id  uuid.UUID
 	)
 
 	for {
-		if uid, err = uuid.NewRandom(); err != nil {
+		if id, err = uuid.NewRandom(); err != nil {
 			err = errors.Wrapf(err, "Failed to create random UUID")
 			panic(err)
 		}
 
-		invkID = uid.String()
+		invkID = id.String()
 
 		if _, ok := assigns[invkID]; !ok {
 			break

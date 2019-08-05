@@ -2,6 +2,7 @@ package pool
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 
@@ -18,7 +19,7 @@ func (p *Pool) Fetch(ctx context.Context, image string) (w worker.Worker, e erro
 		ok = img == image
 	}
 	if !ok {
-		e = errors.New("not found")
+		e = errors.New(fmt.Sprintf("Image %s not found", image))
 		return
 	}
 
@@ -32,7 +33,9 @@ func (p *Pool) Fetch(ctx context.Context, image string) (w worker.Worker, e erro
 	}
 
 	if ok = w.IsAllocated(); !ok {
-		e = errors.New("Fail")
+		e = errors.New(fmt.Sprintf("Worker %s granted but never allocated", w.ID()))
+		go w.RemoveDetach(p.ctx)
+
 		return
 	}
 

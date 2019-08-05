@@ -10,12 +10,12 @@ import (
 )
 
 // Serve starts a given gRPC server.
-func Serve(ctx context.Context, server *grpc.Server, address string) (err error) {
+func Serve(ctx context.Context, server *grpc.Server, address string) (e error) {
 	var (
-		listen net.Listener
+		l net.Listener
 	)
 
-	if listen, err = net.Listen("tcp", address); err != nil {
+	if l, e = net.Listen("tcp", address); e != nil {
 		return
 	}
 
@@ -32,7 +32,7 @@ func Serve(ctx context.Context, server *grpc.Server, address string) (err error)
 		return
 	}()
 
-	err = server.Serve(listen)
+	e = server.Serve(l)
 
 	return
 }

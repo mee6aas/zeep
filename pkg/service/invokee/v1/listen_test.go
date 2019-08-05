@@ -12,13 +12,11 @@ import (
 func TestListen(t *testing.T) {
 	var (
 		err    error
-		ctx    context.Context
-		cc     context.CancelFunc
 		stream v1.Invokee_ListenClient
 	)
 
-	ctx, cc = context.WithTimeout(context.Background(), time.Second)
-	defer cc()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
 
 	if stream, err = testClient.Listen(ctx, &v1.ListenRequest{}); err != nil {
 		t.Fatalf("failed to request to listen: %v", err)
@@ -44,13 +42,11 @@ func TestListen(t *testing.T) {
 func TestDisconnectWhileListening(t *testing.T) {
 	var (
 		err    error
-		ctx    context.Context
-		cc     context.CancelFunc
 		stream v1.Invokee_ListenClient
 	)
 
-	ctx, cc = context.WithTimeout(context.Background(), time.Second)
-	defer cc()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
 
 	if stream, err = testClient.Listen(ctx, &v1.ListenRequest{}); err != nil {
 		t.Fatalf("failed to request to listen: %v", err)
@@ -61,9 +57,9 @@ func TestDisconnectWhileListening(t *testing.T) {
 			break
 		}
 
-		log.Println("data received")
+		t.Log("data received")
 
-		cc()
+		cancel()
 	}
 
 	select {

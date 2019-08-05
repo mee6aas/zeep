@@ -14,8 +14,8 @@ func (p *Pool) alloc(ctx context.Context, image string) (e error) {
 		w  worker.Worker
 	)
 
-	p.wg.Add(1)
-	defer p.wg.Done()
+	p.allocating.Add(1)
+	defer p.allocating.Done()
 
 	for _, img := range p.images {
 		ok = img == image
@@ -33,15 +33,13 @@ func (p *Pool) alloc(ctx context.Context, image string) (e error) {
 		return
 	}
 
-	c := w.Container()
-	if e = c.Start(ctx); e != nil {
-		// TODO: handle orphan worker
-		_ = w.Remove(ctx)
+	if e = w.Start(ctx); e != nil {
+		w.RemoveDetach(p.ctx)
 
 		return
 	}
 
-	p.pendings[c.IP()] = w
+	p.pendings[w.IP()] = w
 
 	// TODO: update used* fields
 

@@ -73,17 +73,17 @@ func TestStorageCreateWithoutQuota(t *testing.T) {
 	}
 
 	var (
-		err  error
-		stor Storage
-		trg  *os.File
+		err error
+		sto Storage
+		trg *os.File
 	)
 
-	if stor, err = NewStorage(Config{}); err != nil {
+	if sto, err = NewStorage(Config{}); err != nil {
 		t.Fatalf("failed to create storage: %v", err)
 	}
-	defer stor.Remove()
+	defer sto.Remove()
 
-	if trg, err = ioutil.TempFile(stor.Path(), ""); err != nil {
+	if trg, err = ioutil.TempFile(sto.Path(), ""); err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
 	}
 

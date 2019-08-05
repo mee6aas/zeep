@@ -12,9 +12,9 @@ type TaskAssigner interface {
 }
 
 // Allocate set task assigner to this worker.
-func (w *Worker) Allocate(ta TaskAssigner) (err error) {
+func (w *Worker) Allocate(ta TaskAssigner) (e error) {
 	if w.IsAllocated() {
-		err = errors.New("Already allocated worker")
+		e = errors.New("Already allocated worker")
 		return
 	}
 

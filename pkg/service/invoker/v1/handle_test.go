@@ -16,7 +16,7 @@ func (h *mockHandle) InvokeRequested(
 	actName string,
 	actLabel string,
 	arg string,
-) (out *v1.InvokeResponse, err error) {
+) (out *v1.InvokeResponse, e error) {
 	out = &v1.InvokeResponse{Result: fmt.Sprintf("%s@%s by %s with %s", actName, actLabel, username, arg)}
 	return
 }
@@ -25,6 +25,6 @@ func (h *mockHandle) RegisterRequested(
 	_ context.Context,
 	username string,
 	actDir string,
-) (err error) {
+) (e error) {
 	return
 }

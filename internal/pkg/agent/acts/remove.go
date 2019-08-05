@@ -21,7 +21,9 @@ func Remove(username string, actName string) (e error) {
 	}
 
 	if e = os.RemoveAll(filepath.Join(rootDirPath, actName)); e != nil {
-		return
+		if !os.IsNotExist(e) {
+			return
+		}
 	}
 
 	delete(acts, actName)

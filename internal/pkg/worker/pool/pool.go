@@ -4,6 +4,8 @@ import (
 	"context"
 	"sync"
 
+	"github.com/pkg/errors"
+
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
@@ -22,8 +24,10 @@ type Pool struct {
 	//          image
 	granted map[string](chan worker.Worker)
 
-	// used to destory gracefully
-	wg     *sync.WaitGroup
+	// holds the workers under allocating.
+	allocating *sync.WaitGroup
+
+	// life of pool
 	ctx    context.Context
 	cancel context.CancelFunc
 }
@@ -68,16 +72,26 @@ func NewPool(
 		pendings: make(map[string]worker.Worker),
 		granted:  granted,
 
-		wg: &sync.WaitGroup{},
+		allocating: &sync.WaitGroup{},
 	}
 	p.ctx, p.cancel = context.WithCancel(context.Background())
 
-	for _, image := range config.Images {
-		// TODO: go and wait
-		if e = p.alloc(ctx, image); e != nil {
-			p.cancel()
-			return
+	{
+		wg := sync.WaitGroup{}
+		for _, img := range config.Images {
+			wg.Add(1)
+			go func(img string) {
+				defer wg.Done()
+				if e = p.alloc(ctx, img); e != nil {
+					p.cancel()
+				}
+			}(img)
 		}
+		wg.Wait()
+	}
+
+	if e != nil {
+		e = errors.Wrap(e, "Failed while allocating")
 	}
 
 	return

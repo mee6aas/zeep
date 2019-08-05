@@ -15,7 +15,7 @@ import (
 
 // NewStorage creates a new storage based on the given configuration
 // and returns its descriptor.
-func NewStorage(config Config) (storage Storage, err error) {
+func NewStorage(config Config) (s Storage, e error) {
 	var (
 		trg string // path of the storage to create
 		opt string // option for tmpfs
@@ -23,9 +23,14 @@ func NewStorage(config Config) (storage Storage, err error) {
 
 	trg = filepath.Join(storageRoot, uuid.New().String())
 
-	if err = os.Mkdir(trg, os.ModePerm); err != nil {
+	if e = os.Mkdir(trg, os.ModePerm); e != nil {
 		return
 	}
+	defer func() {
+		if e != nil {
+			os.Remove(trg)
+		}
+	}()
 
 	opt = fmt.Sprintf("size=%d", config.Size)
 
@@ -33,17 +38,13 @@ func NewStorage(config Config) (storage Storage, err error) {
 		opt = ""
 	}
 
-	if err = unix.Mount("tmpfs", trg, "tmpfs", 0, opt); err != nil {
-		err = errors.Wrap(err, "failed to mount tmpfs")
-		if e := os.Remove(trg); e != nil {
-			e = errors.Wrapf(e, "failed to remove mountpoint %s", trg)
-			err = errors.Wrap(err, e.Error())
-		}
+	if e = unix.Mount("tmpfs", trg, "tmpfs", 0, opt); e != nil {
+		e = errors.Wrap(e, "failed to mount tmpfs")
 		return
 	}
 
-	storage.path = trg
-	storage.size = config.Size
+	s.path = trg
+	s.size = config.Size
 
 	return
 }

@@ -14,12 +14,12 @@ type TaskAssigner struct {
 }
 
 // Assign sends a task to the worker.
-func (ta TaskAssigner) Assign(ctx context.Context, t interface{}) (err error) {
+func (ta TaskAssigner) Assign(ctx context.Context, t interface{}) (e error) {
 	select {
 	case <-ta.ctx.Done():
-		err = errors.New("Disconnected")
+		e = errors.New("Disconnected")
 	case <-ctx.Done():
-		err = ctx.Err()
+		e = ctx.Err()
 	case ta.stream <- (t.(v1.Task)):
 	}
 

@@ -26,6 +26,9 @@ type Worker struct {
 // ID returns the ID of the container used by this worker.
 func (w Worker) ID() string { return w.container.ID() }
 
+// IP returns the IP of the container used by this worker.
+func (w Worker) IP() string { return w.container.IP() }
+
 // Container returns a descriptor for the container used by this worker.
 func (w Worker) Container() container.Container { return w.container }
 
@@ -62,6 +65,11 @@ func NewWorker(ctx context.Context, config Config) (worker Worker, e error) {
 		e = errors.Wrap(e, "Failed to create storage")
 		return
 	}
+	defer func() {
+		if e != nil {
+			sto.RemoveDetach()
+		}
+	}()
 
 	os.Mkdir(filepath.Join(sto.Path(), filepath.Base(api.ActivityResource)), 755)
 	// os.Mkdir(filepath.Join(sto.Path(), filepath.Base(api.WorkflowStorage)), 755)
@@ -70,7 +78,6 @@ func NewWorker(ctx context.Context, config Config) (worker Worker, e error) {
 		Image:   config.Image,
 		Storage: sto.Path(),
 	}); e != nil {
-		sto.Remove()
 		e = errors.Wrap(e, "Failed to create container")
 		return
 	}

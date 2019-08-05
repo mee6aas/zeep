@@ -7,7 +7,7 @@ import (
 )
 
 // Inspect returns detailed information on this container.
-func (c Container) Inspect(ctx context.Context) (info types.ContainerJSON, err error) {
-	info, err = engineClient.ContainerInspect(ctx, c.id)
+func (c Container) Inspect(ctx context.Context) (i types.ContainerJSON, e error) {
+	i, e = engineClient.ContainerInspect(ctx, c.id)
 	return
 }

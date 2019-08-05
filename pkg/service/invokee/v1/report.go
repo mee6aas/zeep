@@ -13,8 +13,8 @@ type ReportRequest = apiV1.ReportRequest
 func (s *invokeeAPIServer) Report(
 	ctx context.Context,
 	in *apiV1.ReportRequest,
-) (rst *apiV1.ReportResponse, err error) {
-	rst = &apiV1.ReportResponse{}
-	err = s.handle.Reported(in)
+) (out *apiV1.ReportResponse, e error) {
+	out = &apiV1.ReportResponse{}
+	e = s.handle.Reported(in)
 	return
 }

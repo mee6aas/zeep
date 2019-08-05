@@ -16,7 +16,7 @@ func (h *mockHandle) Connected(
 	ctx context.Context,
 	_ *net.TCPAddr,
 	conn chan<- v1.Task,
-) (err error) {
+) (e error) {
 	log.Println("connected")
 
 	go func() {
@@ -24,10 +24,8 @@ func (h *mockHandle) Connected(
 		for i := 0; i < 3; i++ {
 			select {
 			case <-ctx.Done():
-				log.Println("canceled")
 				return
 			default:
-				log.Println("send data")
 				conn <- v1.Task{}
 			}
 
@@ -42,6 +40,6 @@ func (h *mockHandle) Disconnected(_ *net.TCPAddr) {
 	log.Println("disconnected")
 }
 
-func (h *mockHandle) Reported(_ *v1.ReportRequest) (err error) {
+func (h *mockHandle) Reported(_ *v1.ReportRequest) (e error) {
 	return
 }

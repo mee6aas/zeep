@@ -11,13 +11,11 @@ import (
 func TestInvoke(t *testing.T) {
 	var (
 		err error
-		ctx context.Context
-		cc  context.CancelFunc
 		res *v1.InvokeResponse
 	)
 
-	ctx, cc = context.WithTimeout(context.Background(), time.Second)
-	defer cc()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
 
 	if res, err = testClient.Invoke(ctx, &v1.InvokeRequest{
 		Username: "Rick",

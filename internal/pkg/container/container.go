@@ -47,12 +47,12 @@ type Config struct {
 
 // NewContainer creates a new container based on the given configuration
 // and returns its descriptor.
-func NewContainer(ctx context.Context, config Config) (cont Container, err error) {
+func NewContainer(ctx context.Context, config Config) (c Container, e error) {
 	var (
 		res dockerCont.ContainerCreateCreatedBody
 	)
 
-	if res, err = engineClient.ContainerCreate(ctx, &dockerCont.Config{
+	if res, e = engineClient.ContainerCreate(ctx, &dockerCont.Config{
 		Image: config.Image,
 		Env: []string{
 			"AGENT_HOST=" + os.Getenv("AGENT_HOST"),
@@ -70,13 +70,13 @@ func NewContainer(ctx context.Context, config Config) (cont Container, err error
 				},
 			},
 		},
-	}, nil, ""); err != nil {
+	}, nil, ""); e != nil {
 		return
 	}
 
-	cont.id = res.ID
-	cont.image = config.Image
-	cont.storage = config.Storage
+	c.id = res.ID
+	c.image = config.Image
+	c.storage = config.Storage
 
 	return
 }

@@ -11,23 +11,23 @@ import (
 )
 
 // Start starts this container.
-func (c *Container) Start(ctx context.Context) (err error) {
+func (c *Container) Start(ctx context.Context) (e error) {
 	var (
 		ok   bool
 		info types.ContainerJSON
 		es   *network.EndpointSettings
 	)
 
-	if err = engineClient.ContainerStart(ctx, c.id, types.ContainerStartOptions{}); err != nil {
+	if e = engineClient.ContainerStart(ctx, c.id, types.ContainerStartOptions{}); e != nil {
 		return
 	}
 
-	if info, err = engineClient.ContainerInspect(ctx, c.id); err != nil {
+	if info, e = engineClient.ContainerInspect(ctx, c.id); e != nil {
 		return
 	}
 
 	if es, ok = info.NetworkSettings.Networks[api.NetworkName]; !ok {
-		err = errors.New("Container has no network settings")
+		e = errors.New("Container has no network settings")
 		return
 	}
 

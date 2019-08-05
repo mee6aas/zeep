@@ -7,18 +7,14 @@ import (
 )
 
 // Assign passes task to operator
-func (w *Worker) Assign(ctx context.Context, task interface{}) (err error) {
+func (w *Worker) Assign(ctx context.Context, task interface{}) (e error) {
 	if !w.IsAllocated() {
-		err = errors.New("Task operator not allocated")
+		e = errors.New("Task operator not allocated")
 		return
 	}
 
 	w.isAssigned = true
-	err = w.taskAssigner.Assign(ctx, task)
-
-	if err != nil {
-		w.Remove(ctx)
-	}
+	e = w.taskAssigner.Assign(ctx, task)
 
 	return
 }

@@ -18,7 +18,7 @@ type Task = apiV1.Task
 func (s *invokeeAPIServer) Listen(
 	in *apiV1.ListenRequest,
 	stream apiV1.Invokee_ListenServer,
-) (err error) {
+) (e error) {
 	var (
 		addr      *net.TCPAddr
 		conn      chan Task
@@ -29,7 +29,7 @@ func (s *invokeeAPIServer) Listen(
 	if p, ok := peer.FromContext(stream.Context()); ok {
 		addr = p.Addr.(*net.TCPAddr)
 	} else {
-		err = status.Error(codes.Unknown, "Failed to resolve connection information")
+		e = status.Error(codes.Unknown, "Failed to resolve connection information")
 		return
 	}
 
@@ -37,8 +37,8 @@ func (s *invokeeAPIServer) Listen(
 	ctxStream, ccStream = context.WithCancel(context.Background())
 	defer ccStream()
 
-	if err = s.handle.Connected(ctxStream, addr, conn); err != nil {
-		err = status.Error(codes.PermissionDenied, "Operation refused")
+	if e = s.handle.Connected(ctxStream, addr, conn); e != nil {
+		e = status.Errorf(codes.PermissionDenied, "Operation refused: %s", e.Error())
 		return
 	}
 

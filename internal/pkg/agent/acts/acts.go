@@ -1,12 +1,6 @@
 package acts
 
 import (
-	"context"
-	"io/ioutil"
-	"os"
-
-	"github.com/pkg/errors"
-
 	"github.com/mee6aas/zeep/pkg/activity"
 )
 
@@ -33,39 +27,4 @@ func RootDirPath() string { return rootDirPath }
 
 // Config holds the configuration for the acts.
 type Config struct {
-}
-
-// Setup initializes acts.
-func Setup(config Config) (e error) {
-	if IsSetup() {
-		return
-	}
-
-	if rootDirPath, e = ioutil.TempDir("", ""); e != nil {
-		e = errors.Wrap(e, "Failed to create root directory")
-		return
-	}
-
-	isSetup = true
-
-	return
-}
-
-// Destroy removes acts resources.
-func Destroy(_ context.Context) (e error) {
-	if !IsSetup() {
-		return
-	}
-
-	if e = os.RemoveAll(rootDirPath); e != nil {
-		e = errors.Wrapf(e, "Failed to remove root directory")
-		return
-	}
-
-	rootDirPath = ""
-	activities = make(map[string]map[string]activity.Activity)
-
-	isSetup = false
-
-	return
 }
