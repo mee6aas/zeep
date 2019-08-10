@@ -20,6 +20,7 @@ import (
 
 func TestIntegrationWithMock(t *testing.T) {
 	const (
+		testAddr        = "172.17.0.1:5210" // docker default ip
 		testUsername    = "Jerry"
 		testActName     = "empty"
 		testActDirPath  = "./testdata/empty"
@@ -135,7 +136,7 @@ func TestIntegration(t *testing.T) {
 		testActName     = "echo"
 		testActDirPath  = "./testdata/echo"
 		testActArg      = "I'm Mr. Meeseeks! Look at me!"
-		testExpectedRst = "\"I'm Mr. Meeseeks! Look at me!\"" // TODO: reconsider the schema. it should be properly wrapped by {}
+		testExpectedRst = "I'm Mr. Meeseeks! Look at me!"
 	)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)

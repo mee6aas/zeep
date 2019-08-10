@@ -35,7 +35,9 @@ func (i *Invokee) Connect(address string) (e error) {
 // Close closes connection.
 func (i *Invokee) Close() (e error) {
 	i.ListenCancel()
-	close(i.TaskChan)
+	if i.TaskChan != nil {
+		close(i.TaskChan)
+	}
 	e = i.Conn.Close()
 
 	return

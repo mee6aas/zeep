@@ -15,7 +15,7 @@ func Destroy(ctx context.Context) (e error) {
 		for _, ws := range es {
 			for _, w := range ws {
 				wg.Add(1)
-				defer func(w worker.Worker) {
+				go func(w worker.Worker) {
 					defer wg.Done()
 					w.RemoveDetach(ctx)
 				}(w)
