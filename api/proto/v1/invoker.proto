@@ -31,8 +31,9 @@ enum RegisterMethod {
 
 message RegisterRequest {
     string username = 1;
-    RegisterMethod method = 2;
-    string path = 3;
+    string actName = 2;
+    RegisterMethod method = 3;
+    string path = 4;
 }
 
 message RegisterResponse {}

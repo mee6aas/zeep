@@ -20,7 +20,7 @@ func (s *invokerAPIServer) Register(
 		e = status.Error(codes.Unimplemented, "Unimplemented")
 		return
 	case apiV1.RegisterMethod_LOCAL:
-		e = s.handle.RegisterRequested(ctx, in.GetUsername(), in.GetPath())
+		e = s.handle.RegisterRequested(ctx, in.GetUsername(), in.GetActName(), in.GetPath())
 		return
 
 	case apiV1.RegisterMethod_UNKOWN:

@@ -49,7 +49,7 @@ func UnmarshalFromDir(actDir string) (a Activity, e error) {
 		}
 	}
 
-	e = errors.New("Not found")
+	e = errors.New("Manifest not found")
 
 	return
 }

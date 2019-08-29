@@ -37,10 +37,12 @@ func (i *Invoker) Close() (e error) {
 func (i *Invoker) Register(
 	ctx context.Context,
 	username string,
+	actName string,
 	actDirPath string,
 ) (e error) {
 	_, e = i.Client.Register(ctx, &invokerV1API.RegisterRequest{
 		Username: username,
+		ActName:  actName,
 		Path:     actDirPath,
 		Method:   invokerV1API.RegisterMethod_LOCAL,
 	})

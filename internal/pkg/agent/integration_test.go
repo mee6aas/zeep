@@ -78,7 +78,7 @@ func TestIntegrationWithMock(t *testing.T) {
 		t.Fatalf("Failed to connect to invoker service: %v", err)
 	}
 
-	if err := invker.Register(ctx, testUsername, testActDirPath); err != nil {
+	if err := invker.Register(ctx, testUsername, testActName, testActDirPath); err != nil {
 		t.Fatalf("Failed to request for register an activity to agent: %v", err)
 	}
 
@@ -169,7 +169,7 @@ func TestIntegration(t *testing.T) {
 		t.Fatalf("Failed to connect to invoker service: %v", err)
 	}
 
-	if err := invker.Register(ctx, testUsername, testActDirPath); err != nil {
+	if err := invker.Register(ctx, testUsername, testActName, testActDirPath); err != nil {
 		t.Fatalf("Failed to request for register an activity to agent: %v", err)
 	}
 

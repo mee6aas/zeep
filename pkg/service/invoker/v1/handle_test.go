@@ -24,6 +24,7 @@ func (h *mockHandle) InvokeRequested(
 func (h *mockHandle) RegisterRequested(
 	_ context.Context,
 	username string,
+	actName string,
 	actDir string,
 ) (e error) {
 	return
