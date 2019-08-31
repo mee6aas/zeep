@@ -4,13 +4,11 @@ package storage
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
-	"path/filepath"
 
-	"golang.org/x/sys/unix"
-
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	"golang.org/x/sys/unix"
 )
 
 // NewStorage creates a new storage based on the given configuration
@@ -21,11 +19,11 @@ func NewStorage(config Config) (s Storage, e error) {
 		opt string // option for tmpfs
 	)
 
-	trg = filepath.Join(storageRoot, uuid.New().String())
-
-	if e = os.Mkdir(trg, os.ModePerm); e != nil {
+	// trg = filepath.Join(storageRoot, uuid.New().String())
+	if trg, e = ioutil.TempDir("", ""); e != nil {
 		return
 	}
+
 	defer func() {
 		if e != nil {
 			os.Remove(trg)

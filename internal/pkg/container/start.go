@@ -6,8 +6,6 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/network"
 	"github.com/pkg/errors"
-
-	"github.com/mee6aas/zeep/api"
 )
 
 // Start starts this container.
@@ -26,7 +24,7 @@ func (c *Container) Start(ctx context.Context) (e error) {
 		return
 	}
 
-	if es, ok = info.NetworkSettings.Networks[api.NetworkName]; !ok {
+	if es, ok = info.NetworkSettings.Networks[agentNet]; !ok {
 		e = errors.New("Container has no network settings")
 		return
 	}

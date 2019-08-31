@@ -26,6 +26,7 @@ func TestSetup(t *testing.T) {
 	defer cancel()
 
 	if err := agent.Setup(ctx, agent.Config{
+		Addr: testAddress,
 		Acts: acts.Config{},
 		Pool: pool.Config{Images: []string{"mee6aas/runtime-test:latest"}},
 	}); err != nil {
@@ -42,7 +43,7 @@ func TestServe(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 	defer cancel()
 
-	if err := agent.Serve(ctx, testAddress); (err != nil) &&
+	if err := agent.Serve(ctx); (err != nil) &&
 		(err != context.DeadlineExceeded) {
 		t.Fatalf("Failed to server agent: %v", err)
 	}
@@ -56,7 +57,7 @@ func TestInvokeeListenFail(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	go agent.Serve(ctx, testAddress)
+	go agent.Serve(ctx)
 
 	i := invokee.Invokee{}
 	defer i.Close()

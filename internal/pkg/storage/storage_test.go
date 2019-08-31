@@ -8,25 +8,31 @@ import (
 	"path/filepath"
 	"testing"
 
+	"gotest.tools/assert"
+
 	. "github.com/mee6aas/zeep/internal/pkg/storage"
 )
 
 var (
 	testStorageCreateFailed = false
 
-	testStorage      Storage
 	testStorageQuota = uint64(1024 * 4) // 4KiB
 )
 
-func TestStorageCreate(t *testing.T) {
+func TestStorageCreateAndRemove(t *testing.T) {
 	var (
 		err error
+		sto Storage
 	)
 
-	if testStorage, err = NewStorage(Config{
-		Size: testStorageQuota * 2,
-	}); err != nil {
+	if sto, err = NewStorage(Config{}); err != nil {
 		t.Fatalf("failed to create storage: %v", err)
+	}
+
+	assert.Equal(t, sto.Path(), sto.PathOnHost())
+
+	if err = sto.Remove(); err != nil {
+		t.Fatalf("failed to remove storage: %v", err)
 	}
 }
 
@@ -37,10 +43,18 @@ func TestStorageQuota(t *testing.T) {
 
 	var (
 		err error
+		sto Storage
 		trg *os.File
 	)
 
-	if trg, err = ioutil.TempFile(testStorage.Path(), ""); err != nil {
+	if sto, err = NewStorage(Config{
+		Size: testStorageQuota * 2,
+	}); err != nil {
+		t.Fatalf("failed to create storage: %v", err)
+	}
+	defer sto.Remove()
+
+	if trg, err = ioutil.TempFile(sto.Path(), ""); err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
 	}
 
@@ -50,20 +64,6 @@ func TestStorageQuota(t *testing.T) {
 
 	if _, err := io.CopyN(trg, rand.Reader, int64(testStorageQuota*3)); err == nil {
 		t.Fatalf("expected to fail create %d size file: %v", testStorageQuota*3, err)
-	}
-}
-
-func TestStorageRemove(t *testing.T) {
-	if testStorageCreateFailed {
-		t.Skipf("TestStorageCreate failed")
-	}
-
-	var (
-		err error
-	)
-
-	if err = testStorage.Remove(); err != nil {
-		t.Fatalf("failed to remove storage: %v", err)
 	}
 }
 

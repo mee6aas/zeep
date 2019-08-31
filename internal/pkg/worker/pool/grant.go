@@ -16,7 +16,7 @@ func (p *Pool) Grant(ip string, ta worker.TaskAssigner, version string) (ok bool
 	w.Allocate(ta)
 
 	go func() {
-		img := w.Container().Image()
+		img := w.Image()
 		p.granted[img] <- w
 		delete(p.pendings, ip)
 	}()

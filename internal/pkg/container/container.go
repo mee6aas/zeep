@@ -4,11 +4,11 @@ import (
 	"context"
 	"os"
 
-	"github.com/mee6aas/zeep/api"
-
 	dockerCont "github.com/docker/docker/api/types/container"
 	dockerMnt "github.com/docker/docker/api/types/mount"
 	docker "github.com/docker/docker/client"
+
+	"github.com/mee6aas/zeep/api"
 )
 
 const (
@@ -17,14 +17,15 @@ const (
 
 var (
 	engineClient *docker.Client
+	agentNet     string
+	agentHost    string
+	agentPort    string
 )
 
 // Container describes container.
 type Container struct {
-	id      string // ID of container
-	ip      string // TCP address of container
-	image   string // Image used to create container
-	storage string // Path of the directory mounted on container
+	id string // ID of container
+	ip string // TCP address of container
 }
 
 // ID returns the ID of this container.
@@ -32,12 +33,6 @@ func (c Container) ID() string { return c.id }
 
 // IP returns the IP address of this container.
 func (c Container) IP() string { return c.ip }
-
-// Image returns the image used to create this container.
-func (c Container) Image() string { return c.image }
-
-// Storage returns the path of the directory that mounted on this container.
-func (c Container) Storage() string { return c.storage }
 
 // Config holds the configuration for the container.
 type Config struct {
@@ -55,11 +50,11 @@ func NewContainer(ctx context.Context, config Config) (c Container, e error) {
 	if res, e = engineClient.ContainerCreate(ctx, &dockerCont.Config{
 		Image: config.Image,
 		Env: []string{
-			"AGENT_HOST=" + os.Getenv("AGENT_HOST"),
-			"AGENT_PORT=" + os.Getenv("AGENT_PORT"),
+			api.AgentHostEnvKey + "=" + agentHost,
+			api.AgentPortEnvKey + "=" + agentPort,
 		},
 	}, &dockerCont.HostConfig{
-		NetworkMode: api.NetworkName,
+		NetworkMode: dockerCont.NetworkMode(agentNet),
 		Mounts: []dockerMnt.Mount{
 			dockerMnt.Mount{
 				Type:   dockerMnt.TypeBind,
@@ -75,8 +70,6 @@ func NewContainer(ctx context.Context, config Config) (c Container, e error) {
 	}
 
 	c.id = res.ID
-	c.image = config.Image
-	c.storage = config.Storage
 
 	return
 }
@@ -96,4 +89,12 @@ func init() {
 	}
 
 	engineClient = client
+
+	agentNet = os.Getenv(api.AgentNetworkEnvKey)
+	agentHost = os.Getenv(api.AgentHostEnvKey)
+	agentPort = os.Getenv(api.AgentPortEnvKey)
+
+	if agentNet == "" {
+		agentNet = "bridge"
+	}
 }

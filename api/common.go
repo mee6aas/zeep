@@ -1,11 +1,33 @@
 package api
 
 const (
-	// Mee6aaSDockerOrgName is the name of the docker hub organization Mee6aaS use.
+	// Mee6aaSDockerOrgName is the name of the M6S organization on the docker hub.
 	Mee6aaSDockerOrgName = "mee6aas"
 
-	// NetworkName is a name of docker network that agent use.
-	NetworkName = "m6s"
+	// AgentDefaultContainerName is a default name of docker container that agent serves.
+	AgentDefaultContainerName = "zeep"
+
+	// AgentDefaultPort is a default port of the agent serves.
+	AgentDefaultPort = 5122
+
+	// AgentDefaultNetworkName is a default name of docker network that agent uses.
+	AgentDefaultNetworkName = "microverse"
+
+	// AgentTmpDirPathEnvKey is key of environment variable
+	// represents the path of the directory on host that bound to temp directory on container.
+	AgentTmpDirPathEnvKey = "AGENT_TEMP_DIR_HOST_PATH"
+
+	// AgentNetworkEnvKey is key of environment variable
+	// represents the name of the network that agent serves.
+	AgentNetworkEnvKey = "AGENT_NETWORK"
+
+	// AgentHostEnvKey is key of environment variable
+	// represents the host name of the agent.
+	AgentHostEnvKey = "AGENT_HOST"
+
+	// AgentPortEnvKey is key of environment variable
+	// represents the port of the agent.
+	AgentPortEnvKey = "AGENT_PORT"
 
 	// ActivityStorage is the path of the directory that activity use.
 	// If the invocation ID is `INVOKE_ID`, the invoked activity can store data in /act/`INVOKE_ID`.
@@ -21,14 +43,4 @@ const (
 
 	// DockerAPIVersion is version of Docker client API that Zeep use.
 	DockerAPIVersion = "1.39"
-
-	// DefaultMongoVersion is the default version of the mongodb that Zeep use.
-	DefaultMongoVersion = "4.0"
-
-	// DefaultMongoHost is the default host name for the mongodb that Zeep use.
-	DefaultMongoHost = "127.0.0.1"
-
-	// DefaultMongoPort is the default port for the mongodb that Zeep use.
-	// This value must be the same value as the default port for mongod and mongos instances.
-	DefaultMongoPort = uint16(27017)
 )

@@ -5,14 +5,14 @@ import (
 	"net"
 	"os"
 
+	"github.com/mee6aas/zeep/api"
 	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
 	"github.com/mee6aas/zeep/internal/pkg/worker/pool"
 )
 
 // Config holds the configuration for the agent.
 type Config struct {
-	AccessPoint string // The IP address that worker connect.
-
+	Addr string // The address agent to serve
 	Acts acts.Config
 	Pool pool.Config
 }
@@ -23,11 +23,13 @@ func Setup(ctx context.Context, conf Config) (e error) {
 		return
 	}
 
-	if conf.AccessPoint == "" {
+	addr = conf.Addr
+
+	if conf.Addr == "" {
 		// do nothing
-	} else if host, port, err := net.SplitHostPort(conf.AccessPoint); err == nil {
-		os.Setenv("AGENT_HOST", host)
-		os.Setenv("AGENT_PORT", port)
+	} else if host, port, err := net.SplitHostPort(conf.Addr); err == nil {
+		os.Setenv(api.AgentHostEnvKey, host)
+		os.Setenv(api.AgentPortEnvKey, port)
 	} else {
 		e = err
 		return

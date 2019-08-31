@@ -16,6 +16,7 @@ import (
 type Worker struct {
 	InvokeeVersion string // Version of invokee service that assigned to this worker
 
+	image        string
 	container    container.Container // Container descriptor
 	storage      storage.Storage     // Storage descriptor
 	isAllocated  bool                // Is taskAssigner set
@@ -28,6 +29,9 @@ func (w Worker) ID() string { return w.container.ID() }
 
 // IP returns the IP of the container used by this worker.
 func (w Worker) IP() string { return w.container.IP() }
+
+// Image returns the image of the container used by this worker.
+func (w Worker) Image() string { return w.image }
 
 // Container returns a descriptor for the container used by this worker.
 func (w Worker) Container() container.Container { return w.container }
@@ -55,13 +59,13 @@ type Config struct {
 
 // NewWorker creates a new worker based on the given configuration
 // and returns its descriptor.
-func NewWorker(ctx context.Context, config Config) (worker Worker, e error) {
+func NewWorker(ctx context.Context, conf Config) (worker Worker, e error) {
 	var (
 		sto  storage.Storage
 		cont container.Container
 	)
 
-	if sto, e = storage.NewStorage(storage.Config{Size: config.Size}); e != nil {
+	if sto, e = storage.NewStorage(storage.Config{Size: conf.Size}); e != nil {
 		e = errors.Wrap(e, "Failed to create storage")
 		return
 	}
@@ -75,13 +79,14 @@ func NewWorker(ctx context.Context, config Config) (worker Worker, e error) {
 	// os.Mkdir(filepath.Join(sto.Path(), filepath.Base(api.WorkflowStorage)), 755)
 
 	if cont, e = container.NewContainer(ctx, container.Config{
-		Image:   config.Image,
-		Storage: sto.Path(),
+		Image:   conf.Image,
+		Storage: sto.PathOnHost(),
 	}); e != nil {
 		e = errors.Wrap(e, "Failed to create container")
 		return
 	}
 
+	worker.image = conf.Image
 	worker.container = cont
 	worker.storage = sto
 

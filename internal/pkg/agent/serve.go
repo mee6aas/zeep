@@ -17,7 +17,7 @@ import (
 )
 
 // Serve starts services.
-func Serve(ctx context.Context, address string) (e error) {
+func Serve(ctx context.Context) (e error) {
 	s := grpc.NewServer()
 
 	invokeeV1API.RegisterInvokeeServer(s, invokeeV1Svc.NewInvokeeAPIServer(
@@ -31,7 +31,7 @@ func Serve(ctx context.Context, address string) (e error) {
 		},
 	))
 
-	if e = server.Serve(ctx, s, address); e != nil {
+	if e = server.Serve(ctx, s, addr); e != nil {
 		return
 	}
 
