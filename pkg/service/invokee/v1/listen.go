@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
@@ -29,9 +30,21 @@ func (s *invokeeAPIServer) Listen(
 	if p, ok := peer.FromContext(stream.Context()); ok {
 		addr = p.Addr.(*net.TCPAddr)
 	} else {
-		e = status.Error(codes.Unknown, "Failed to resolve connection information")
+		e = status.Error(codes.Unknown, "Failed to resolve request information")
 		return
 	}
+
+	l := log.WithFields(log.Fields{
+		"addr": addr.String(),
+	})
+
+	l.Info("Worker listen requested")
+
+	defer func() {
+		if e != nil {
+			l.WithError(e).Warn("Worker listen refused")
+		}
+	}()
 
 	conn = make(chan Task, 1)
 	ctxStream, ccStream = context.WithCancel(context.Background())
@@ -41,6 +54,8 @@ func (s *invokeeAPIServer) Listen(
 		e = status.Errorf(codes.PermissionDenied, "Operation refused: %s", e.Error())
 		return
 	}
+
+	l.Info("Connected")
 
 	go func() {
 		defer ccStream()
@@ -53,6 +68,8 @@ func (s *invokeeAPIServer) Listen(
 
 	<-ctxStream.Done()
 	s.handle.Disconnected(addr)
+
+	l.Info("Disconnected")
 
 	return
 }

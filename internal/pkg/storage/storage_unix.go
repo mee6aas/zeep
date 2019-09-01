@@ -20,7 +20,7 @@ func NewStorage(config Config) (s Storage, e error) {
 	)
 
 	// trg = filepath.Join(storageRoot, uuid.New().String())
-	if trg, e = ioutil.TempDir("", ""); e != nil {
+	if trg, e = ioutil.TempDir("", "zeep-"); e != nil {
 		return
 	}
 

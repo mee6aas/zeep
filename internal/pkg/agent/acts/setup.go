@@ -12,7 +12,7 @@ func Setup(config Config) (e error) {
 		return
 	}
 
-	if rootDirPath, e = ioutil.TempDir("", ""); e != nil {
+	if rootDirPath, e = ioutil.TempDir("", "zeep-act-"); e != nil {
 		e = errors.Wrap(e, "Failed to create root directory")
 		return
 	}

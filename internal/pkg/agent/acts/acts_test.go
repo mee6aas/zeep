@@ -44,13 +44,13 @@ func TestAddAndRemove(t *testing.T) {
 	}
 
 	defer func() {
-		if e := acts.Destroy(context.Background()); e != nil {
-			t.Logf("Failed to destroy acts: %v", e)
+		if err = acts.Destroy(context.Background()); err != nil {
+			t.Fatalf("Failed to destroy acts: %v", err)
 		}
 	}()
 
 	if err = acts.AddFromDir(username, actName, "./testdata/valid"); err != nil {
-		t.Fatalf("Failed to add activity")
+		t.Fatalf("Failed to add activity: %v", err)
 	}
 
 	if _, ok := acts.Read(username, actName); !ok {
@@ -62,11 +62,7 @@ func TestAddAndRemove(t *testing.T) {
 	}
 
 	if err = acts.Remove(username, actName); err != nil {
-		t.Fatalf("Failed to remove activity")
-	}
-
-	if err = acts.Destroy(context.Background()); err != nil {
-		t.Fatalf("Failed to destroy acts")
+		t.Fatalf("Failed to remove activity: %v", err)
 	}
 }
 
@@ -82,6 +78,12 @@ func TestAddFromTarGz(t *testing.T) {
 		t.Fatalf("Failed to setup acts: %v", err)
 	}
 
+	defer func() {
+		if err = acts.Destroy(context.Background()); err != nil {
+			t.Fatalf("Failed to destroy acts: %v", err)
+		}
+	}()
+
 	if err = acts.AddFromTarGz(username, actName, "./testdata/valid/valid.tar.gz"); err != nil {
 		t.Fatalf("Failed to add gzipped tarball activity: %v", err)
 	}
@@ -95,11 +97,7 @@ func TestAddFromTarGz(t *testing.T) {
 	}
 
 	if err = acts.Remove(username, actName); err != nil {
-		t.Fatalf("Failed to remove activity")
-	}
-
-	if err = acts.Destroy(context.Background()); err != nil {
-		t.Fatalf("Failed to destroy acts")
+		t.Fatalf("Failed to remove activity: %v", err)
 	}
 }
 
@@ -148,6 +146,12 @@ func TestAddFromHTTP(t *testing.T) {
 		t.Fatalf("Failed to setup acts: %v", err)
 	}
 
+	defer func() {
+		if err = acts.Destroy(context.Background()); err != nil {
+			t.Fatalf("Failed to destroy acts: %v", err)
+		}
+	}()
+
 	if err = acts.AddFromHTTP(username, actName, "http://localhost:5125/"); err != nil {
 		t.Fatalf("Failed to add gzipped tarball activity: %v", err)
 	}
@@ -167,10 +171,6 @@ func TestAddFromHTTP(t *testing.T) {
 	}
 
 	if err = acts.Remove(username, actName); err != nil {
-		t.Fatalf("Failed to remove activity")
-	}
-
-	if err = acts.Destroy(context.Background()); err != nil {
-		t.Fatalf("Failed to destroy acts")
+		t.Fatalf("Failed to remove activity: %v", err)
 	}
 }

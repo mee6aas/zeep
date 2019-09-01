@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/mee6aas/zeep/internal/pkg/agent"
@@ -23,39 +24,47 @@ var rootCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		{
-			fmt.Print("Setup agent...")
+			log.Info("Setting up agent")
+
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
-			if err := agent.Setup(ctx, agent.Config{
+			err := agent.Setup(ctx, agent.Config{
 				Addr: agentAddr,
 				Pool: pool.Config{Images: []string{"mee6aas/runtime-nodejs:latest"}},
-			}); err != nil {
-				fmt.Println("Failed")
-				fmt.Println(err)
-				cancel()
+			})
+			cancel()
+
+			if err != nil {
+				log.WithError(err).Error("Failed to setup agent")
 				return
 			}
-			cancel()
-			fmt.Println("Done")
+
+			log.Info("Agent setup")
 		}
 
 		{
-			fmt.Printf("Serve agent at [%s]...", agentAddr)
+			log.WithFields(log.Fields{
+				"addr": agentAddr,
+			}).Info("Serving agent")
+
 			if err := agent.Serve(context.Background()); err != nil {
-				fmt.Println("Failed")
-				fmt.Println(err)
+				log.WithError(err).Error("Failed to serve agent")
 			}
-			fmt.Println("Stopped")
+
+			log.Info("Agent stopped")
 		}
 
 		{
-			fmt.Print("Destroy agent...")
+			log.Info("Destroying agent")
+
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
-			if err := agent.Destroy(ctx); err != nil {
-				fmt.Println("Failed")
-				fmt.Println(err)
-			}
+			err := agent.Destroy(ctx)
 			cancel()
-			fmt.Println("Done")
+
+			if err != nil {
+				log.WithError(err).Error("Failed to destroy agent")
+			}
+
+			log.Info("Agent destroyed")
 		}
 	},
 }

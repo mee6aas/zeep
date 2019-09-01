@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"strconv"
 	"time"
@@ -11,6 +10,8 @@ import (
 	dockerCont "github.com/docker/docker/api/types/container"
 	dockerMnt "github.com/docker/docker/api/types/mount"
 	docker "github.com/docker/docker/client"
+	dockerNat "github.com/docker/go-connections/nat"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/mee6aas/zeep/api"
@@ -21,9 +22,8 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "serve agent in docker container",
 
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) (e error) {
 		var (
-			err    error
 			client *docker.Client
 			contID string
 			netID  string
@@ -31,114 +31,96 @@ var serveCmd = &cobra.Command{
 		)
 
 		{
-			fmt.Print("Create Docker client...")
-			if client, err = docker.NewClientWithOpts(docker.WithVersion(api.DockerAPIVersion)); err != nil {
-				fmt.Println("Faile")
-				fmt.Println(err)
+			if client, e = createDockerClient(); e != nil {
+				log.WithError(e).Error("Failed to create Docker client")
 				return
 			}
-			fmt.Println("Done")
+			log.Info("Docker client created")
 		}
 
 		{
-			fmt.Print("Check if the network for agent is exists...")
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-			if res, err := getAgentNetworks(ctx, client); err == nil {
-				cancel()
-				if len(res) > 1 {
-					fmt.Println("Failed")
-					fmt.Printf("There are %d networks with the name %s", len(res), api.AgentDefaultNetworkName)
-					return
-				}
+			n, e := getAgentNetwork(ctx, client)
+			cancel()
 
-				if len(res) == 1 {
-					netID = res[0].ID
-					fmt.Println("Found")
-				}
+			if e != nil {
+				log.WithError(e).Error("Failed to decide network of the agent")
+				return e
+			}
 
-				if len(res) == 0 {
-					fmt.Println("Not found")
-				}
-			} else {
-				cancel()
-				fmt.Println("Failed")
-				fmt.Println(err)
-				return
+			if n.ID != "" {
+				netID = n.ID
+				log.Info("Use existing network")
 			}
 		}
 
 		if netID == "" {
-			fmt.Print("Create network for agent...")
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-			if res, err := client.NetworkCreate(ctx, agentNetName, dockerTypes.NetworkCreate{
+			res, e := client.NetworkCreate(ctx, optAgentNet, dockerTypes.NetworkCreate{
 				Driver: "bridge",
 				Scope:  "local",
-			}); err == nil {
-				netID = res.ID
-				cancel()
-				fmt.Println("Done")
-				fmt.Println(netID)
-			} else {
-				cancel()
-				fmt.Println("Failed")
-				fmt.Println(err)
-				return
+			})
+			cancel()
+
+			if e != nil {
+				log.WithError(e).Error("Failed to create network")
+				return e
 			}
+
+			netID = res.ID
+			log.Info("Network created")
 		}
 
 		{
-			fmt.Print("Check if the container for agent is exists...")
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-			if res, err := getAgentContainers(ctx, client); err == nil {
-				cancel()
-				if len(res) > 1 {
-					fmt.Println("Failed")
-					fmt.Printf("There are %d containers with the name %s", len(res), api.AgentDefaultContainerName)
-					return
-				}
+			c, e := getAgentContainer(ctx, client)
+			cancel()
 
-				if len(res) == 1 {
-					contID = res[0].ID
-					fmt.Println("Found")
-				}
+			if e != nil {
+				log.WithError(e).Error("Failed to decide client of the agent")
+				return e
+			}
 
-				if len(res) == 0 {
-					fmt.Println("Not found")
-				}
-			} else {
-				cancel()
-				fmt.Println("Failed")
-				fmt.Println(err)
-				return
+			if c.ID != "" {
+				contID = c.ID
+				log.Info("Use existing container")
 			}
 		}
 
 		if contID == "" {
-			fmt.Print("Create container for agent...")
-
-			if tmpDir, err = ioutil.TempDir("", ""); err != nil {
-				fmt.Println("Failed")
-				fmt.Println(err)
+			if tmpDir, e = ioutil.TempDir("", "zeep-cli-"); e != nil {
+				log.WithError(e).Error("Failed to create temp direcotry")
 				return
 			}
 
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-			if res, err := client.ContainerCreate(ctx, &dockerCont.Config{
+			res, e := client.ContainerCreate(ctx, &dockerCont.Config{
 				Image: "mee6aas/zeep:latest",
 				Env: []string{
 					api.AgentTmpDirPathEnvKey + "=" + tmpDir,
-					api.AgentNetworkEnvKey + "=" + agentNetName,
-					api.AgentHostEnvKey + "=" + agentContName,
+					api.AgentNetworkEnvKey + "=" + optAgentNet,
+					api.AgentHostEnvKey + "=" + optAgentName,
 					api.AgentPortEnvKey + "=" + strconv.Itoa(api.AgentDefaultPort),
 				},
 			}, &dockerCont.HostConfig{
 				Privileged:  true,
-				NetworkMode: dockerCont.NetworkMode(agentNetName),
+				NetworkMode: dockerCont.NetworkMode(optAgentNet),
+				PortBindings: dockerNat.PortMap{
+					dockerNat.Port(optAgentPort + "/tcp"): []dockerNat.PortBinding{
+						dockerNat.PortBinding{
+							HostIP:   optAgentHost,
+							HostPort: optAgentPort,
+						},
+					},
+				},
 				Mounts: []dockerMnt.Mount{
 					dockerMnt.Mount{
 						Type:   dockerMnt.TypeBind,
 						Source: tmpDir,
 						Target: "/tmp",
+						BindOptions: &dockerMnt.BindOptions{
+							Propagation: dockerMnt.PropagationShared,
+						},
 					},
 					dockerMnt.Mount{
 						Type:   dockerMnt.TypeBind,
@@ -146,33 +128,33 @@ var serveCmd = &cobra.Command{
 						Target: "/var/run/docker.sock",
 					},
 				},
-			}, nil, api.AgentDefaultContainerName); err == nil {
-				contID = res.ID
-				cancel()
-				fmt.Println("Done")
-				fmt.Println(contID)
-			} else {
-				cancel()
-				fmt.Println("Failed")
-				fmt.Println(err)
-				return
+			}, nil, api.AgentDefaultContainerName)
+			cancel()
+
+			if e != nil {
+				log.WithError(e).Error("Failed to create container")
+				return e
 			}
+
+			contID = res.ID
+
+			log.WithField("ID", contID).Info("Container created")
 		}
 
 		{
-			fmt.Print("Start agent...")
-
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-			if err = client.ContainerStart(ctx, contID, dockerTypes.ContainerStartOptions{}); err == nil {
-				cancel()
-				fmt.Println("Done")
-			} else {
-				cancel()
-				fmt.Println("Failed")
-				fmt.Println(err)
+			e = client.ContainerStart(ctx, contID, dockerTypes.ContainerStartOptions{})
+			cancel()
+
+			if e != nil {
+				log.WithError(e).Error("Failed to start container")
 				return
 			}
+
+			log.Info("Agent started")
 		}
+
+		return
 	},
 }
 
