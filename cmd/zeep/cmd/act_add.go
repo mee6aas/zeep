@@ -17,14 +17,10 @@ import (
 	invokerAPI "github.com/mee6aas/zeep/pkg/api/invoker/v1"
 )
 
-var (
-	optActAddName string // name of the activity to add
-)
-
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add PATH|URL",
-	Short: "Add an activity",
+	Short: "Add activity",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) (e error) {
 		var (
@@ -40,8 +36,8 @@ var addCmd = &cobra.Command{
 
 		// if name not specified, decide it from the source name.
 		// e.g. /path/to/activity -> activity
-		if optActAddName == "" {
-			optActAddName = filepath.Base(src)
+		if optActName == "" {
+			optActName = filepath.Base(src)
 		}
 
 		// find mountpoint that mounted on `/tmp` in the agent continaer
@@ -61,6 +57,11 @@ var addCmd = &cobra.Command{
 			if e != nil {
 				log.Error("Failed to decide the agent container")
 				return e
+			}
+
+			if c.ID == "" {
+				log.Error("There is no agent container")
+				return errors.New("Not found")
 			}
 
 			for _, mnt := range c.Mounts {
@@ -114,7 +115,7 @@ var addCmd = &cobra.Command{
 			l := log.WithFields(log.Fields{
 				"addr": getAgentAddr(),
 				"user": optUsername,
-				"name": optActAddName,
+				"act":  optActName,
 			})
 
 			conn, e := grpc.Dial(getAgentAddr(), grpc.WithInsecure())
@@ -126,7 +127,7 @@ var addCmd = &cobra.Command{
 
 			req := &invokerAPI.RegisterRequest{
 				Username: optUsername,
-				ActName:  optActAddName,
+				ActName:  optActName,
 				Method:   invokerAPI.RegisterMethod_LOCAL,
 				Path:     trg,
 			}
@@ -146,7 +147,7 @@ var addCmd = &cobra.Command{
 
 		log.WithFields(log.Fields{
 			"user": optUsername,
-			"name": optActAddName,
+			"name": optActName,
 		}).Info("Activity registered")
 
 		return
@@ -156,5 +157,5 @@ var addCmd = &cobra.Command{
 func init() {
 	actCmd.AddCommand(addCmd)
 
-	addCmd.Flags().StringVarP(&optActAddName, "name", "n", "", "name of the activity to add")
+	addCmd.Flags().StringVarP(&optActName, "name", "n", "", "name of the activity to add")
 }

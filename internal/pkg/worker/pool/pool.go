@@ -9,6 +9,11 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
+// TODO:
+// assume pool manages "someruntime:sometag"
+// and invoker registered activity without tag like "someruntime".
+// than invoker invokes the activity and pool fails fetch "someruntime:sometag"
+
 // Pool manages workers
 type Pool struct {
 	images []string // Images for the worker.

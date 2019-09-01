@@ -1,4 +1,4 @@
 {
     "name": "echo",
-    "runtime": "nodejs"
+    "runtime": "nodejs:latest"
 }
