@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	optDebug  bool
 	agentAddr string
 )
 
@@ -28,7 +29,6 @@ var rootCmd = &cobra.Command{
 
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 			err := agent.Setup(ctx, agent.Config{
-				Addr: agentAddr,
 				Pool: pool.Config{Images: []string{"mee6aas/runtime-nodejs:latest"}},
 			})
 			cancel()
@@ -46,7 +46,7 @@ var rootCmd = &cobra.Command{
 				"addr": agentAddr,
 			}).Info("Serving agent")
 
-			if err := agent.Serve(context.Background()); err != nil {
+			if err := agent.Serve(context.Background(), agentAddr); err != nil {
 				log.WithError(err).Error("Failed to serve agent")
 			}
 
@@ -79,5 +79,12 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.PersistentFlags().BoolVar(&optDebug, "debug", false, "print debug messages")
 	rootCmd.Flags().StringVar(&agentAddr, "addr", "0.0.0.0:5122", "address to serve")
+
+	rootCmd.PersistentPreRun = func(_ *cobra.Command, _ []string) {
+		if optDebug {
+			log.SetLevel(log.DebugLevel)
+		}
+	}
 }

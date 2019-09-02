@@ -6,8 +6,8 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
 )
 
-// RegisterRequested is invoked when the invoker requests an activity registration.
-func (h Handle) RegisterRequested(
+// AddRequested is invoked when the invoker requests to add an activity.
+func (h Handle) AddRequested(
 	_ context.Context,
 	username string,
 	actName string,

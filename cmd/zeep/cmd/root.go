@@ -39,7 +39,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVar(&optDebug, "debug", false, "print debug messages")
+	rootCmd.PersistentFlags().BoolVar(&optDebug, "debug", false, "print debug logs")
 	rootCmd.PersistentFlags().StringVarP(&optAgentName, "agent-name", "N", api.AgentDefaultContainerName, "name of the agent container")
 	rootCmd.PersistentFlags().StringVarP(&optAgentHost, "agent-host", "H", "0.0.0.0", "host of the agent serves")
 	rootCmd.PersistentFlags().StringVarP(&optAgentPort, "agent-port", "P", strconv.Itoa(api.AgentDefaultPort), "port of the agent serves")

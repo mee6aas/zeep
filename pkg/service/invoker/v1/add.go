@@ -12,10 +12,10 @@ import (
 	apiV1 "github.com/mee6aas/zeep/pkg/api/invoker/v1"
 )
 
-func (s *invokerAPIServer) Register(
+func (s *invokerAPIServer) Add(
 	ctx context.Context,
-	in *apiV1.RegisterRequest,
-) (out *apiV1.RegisterResponse, e error) {
+	in *apiV1.AddRequest,
+) (out *apiV1.AddResponse, e error) {
 	var (
 		addr *net.TCPAddr
 	)
@@ -34,25 +34,25 @@ func (s *invokerAPIServer) Register(
 		"path": in.GetPath(),
 	})
 
-	l.Info("Activity register requested")
+	l.Info("Activity add requested")
 
-	out = &apiV1.RegisterResponse{}
+	out = &apiV1.AddResponse{}
 
 	switch in.GetMethod() {
-	case apiV1.RegisterMethod_GLOBAL:
+	case apiV1.AddMethod_GLOBAL:
 		e = status.Error(codes.Unimplemented, "Unimplemented")
-	case apiV1.RegisterMethod_LOCAL:
-		e = s.handle.RegisterRequested(ctx, in.GetUsername(), in.GetActName(), in.GetPath())
-	case apiV1.RegisterMethod_UNKOWN:
-		e = status.Error(codes.InvalidArgument, "RegisterMethod UNKNOWN")
+	case apiV1.AddMethod_LOCAL:
+		e = s.handle.AddRequested(ctx, in.GetUsername(), in.GetActName(), in.GetPath())
+	case apiV1.AddMethod_UNKOWN:
+		e = status.Error(codes.InvalidArgument, "AddMethod UNKNOWN")
 	default:
-		e = status.Error(codes.InvalidArgument, "Unrecognized RegisterMethod")
+		e = status.Error(codes.InvalidArgument, "Unrecognized AddMethod")
 	}
 
 	if e != nil {
-		l.WithError(e).Warn("Activity register refused")
+		l.WithError(e).Warn("Activity add refused")
 	} else {
-		l.Info("Activity registered")
+		l.Info("Activity added")
 	}
 
 	return

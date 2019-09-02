@@ -5,17 +5,14 @@ option go_package = "v1";
 
 service Invoker {
     rpc Invoke (InvokeRequest) returns (InvokeResponse){};
-    rpc Register (RegisterRequest) returns (RegisterResponse){};
-}
-
-message Activity {
-    string name = 1;
-    string label = 2;
+    rpc Add (AddRequest) returns (AddResponse){};
+    rpc List (ListRequest) returns (ListResponse){};
+    rpc Remove (RemoveRequest) returns (RemoveResponse){};
 }
 
 message InvokeRequest {
     string username = 1;
-    Activity target = 2;
+    string actName = 2;
     string arg = 3;
 }
 
@@ -23,17 +20,38 @@ message InvokeResponse {
     string result = 1;
 }
 
-enum RegisterMethod {
+enum AddMethod {
     UNKOWN = 0;
     LOCAL = 1;
     GLOBAL = 2;
 }
 
-message RegisterRequest {
+message AddRequest {
     string username = 1;
     string actName = 2;
-    RegisterMethod method = 3;
+    AddMethod method = 3;
     string path = 4;
 }
 
-message RegisterResponse {}
+message AddResponse {}
+
+message ListRequest{
+    string username = 1;
+}
+
+message ManagedActivity {
+    string name = 1;
+    string runtime = 2;
+    string added = 3;
+}
+
+message ListResponse{
+    repeated ManagedActivity activities = 1;
+}
+
+message RemoveRequest{
+    string username = 1;
+    string actName = 2;
+}
+
+message RemoveResponse{}

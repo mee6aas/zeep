@@ -2,6 +2,12 @@ package v1
 
 import (
 	"context"
+	"net"
+
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/peer"
+	"google.golang.org/grpc/status"
 
 	apiV1 "github.com/mee6aas/zeep/pkg/api/invoker/v1"
 )
@@ -16,12 +22,36 @@ func (s *invokerAPIServer) Invoke(
 	ctx context.Context,
 	in *apiV1.InvokeRequest,
 ) (out *apiV1.InvokeResponse, e error) {
-	trg := in.GetTarget()
+	var (
+		addr *net.TCPAddr
+	)
+
+	if p, ok := peer.FromContext(ctx); ok {
+		addr = p.Addr.(*net.TCPAddr)
+	} else {
+		e = status.Error(codes.Unknown, "Failed to resolve request information")
+		return
+	}
+
+	l := log.WithFields(log.Fields{
+		"addr": addr.String(),
+		"user": in.GetUsername(),
+		"name": in.GetActName(),
+	})
+
+	l.Info("Activity invoke requested")
+
 	out, e = s.handle.InvokeRequested(ctx,
 		in.GetUsername(),
-		trg.GetName(),
-		trg.GetLabel(),
+		in.GetActName(),
 		in.GetArg(),
 	)
+
+	if e != nil {
+		l.WithError(e).Warn("Activity invoke refused")
+	} else {
+		l.Info("Activity invoke added")
+	}
+
 	return
 }

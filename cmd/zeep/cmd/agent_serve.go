@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"strconv"
 	"time"
@@ -17,8 +18,8 @@ import (
 	"github.com/mee6aas/zeep/api"
 )
 
-// serveCmd represents the serve command
-var serveCmd = &cobra.Command{
+// agentServeCmd represents the serve command
+var agentServeCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "serve agent in docker container",
 
@@ -35,7 +36,7 @@ var serveCmd = &cobra.Command{
 				log.WithError(e).Error("Failed to create Docker client")
 				return
 			}
-			log.Info("Docker client created")
+			log.Debug("Docker client created")
 		}
 
 		{
@@ -50,7 +51,7 @@ var serveCmd = &cobra.Command{
 
 			if n.ID != "" {
 				netID = n.ID
-				log.Info("Use existing network")
+				log.Debug("Use existing network")
 			}
 		}
 
@@ -68,7 +69,7 @@ var serveCmd = &cobra.Command{
 			}
 
 			netID = res.ID
-			log.Info("Network created")
+			log.Debug("Network created")
 		}
 
 		{
@@ -83,7 +84,7 @@ var serveCmd = &cobra.Command{
 
 			if c.ID != "" {
 				contID = c.ID
-				log.Info("Use existing container")
+				log.Debug("Use existing container")
 			}
 		}
 
@@ -93,8 +94,14 @@ var serveCmd = &cobra.Command{
 				return
 			}
 
+			var cmd []string
+			if optDebug {
+				cmd = []string{"--debug"}
+			}
+
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 			res, e := client.ContainerCreate(ctx, &dockerCont.Config{
+				Cmd:   cmd,
 				Image: "mee6aas/zeep:latest",
 				Env: []string{
 					api.AgentTmpDirPathEnvKey + "=" + tmpDir,
@@ -138,7 +145,7 @@ var serveCmd = &cobra.Command{
 
 			contID = res.ID
 
-			log.WithField("ID", contID).Info("Container created")
+			log.WithField("ID", contID).Debug("Container created")
 		}
 
 		{
@@ -151,13 +158,15 @@ var serveCmd = &cobra.Command{
 				return
 			}
 
-			log.Info("Agent started")
+			log.Debug("Agent started")
 		}
+
+		fmt.Println(contID)
 
 		return
 	},
 }
 
 func init() {
-	agentCmd.AddCommand(serveCmd)
+	agentCmd.AddCommand(agentServeCmd)
 }

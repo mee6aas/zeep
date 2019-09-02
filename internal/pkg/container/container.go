@@ -17,9 +17,10 @@ const (
 
 var (
 	engineClient *docker.Client
-	agentNet     string
-	agentHost    string
-	agentPort    string
+
+	agentNet  string
+	agentHost string
+	agentPort string
 )
 
 // Container describes container.
@@ -43,11 +44,7 @@ type Config struct {
 // NewContainer creates a new container based on the given configuration
 // and returns its descriptor.
 func NewContainer(ctx context.Context, config Config) (c Container, e error) {
-	var (
-		res dockerCont.ContainerCreateCreatedBody
-	)
-
-	if res, e = engineClient.ContainerCreate(ctx, &dockerCont.Config{
+	res, e := engineClient.ContainerCreate(ctx, &dockerCont.Config{
 		Image: config.Image,
 		Env: []string{
 			api.AgentHostEnvKey + "=" + agentHost,
@@ -65,8 +62,9 @@ func NewContainer(ctx context.Context, config Config) (c Container, e error) {
 				},
 			},
 		},
-	}, nil, ""); e != nil {
-		return
+	}, nil, "")
+	if e != nil {
+		return c, e
 	}
 
 	c.id = res.ID

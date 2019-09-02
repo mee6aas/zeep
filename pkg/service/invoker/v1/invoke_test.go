@@ -19,16 +19,13 @@ func TestInvoke(t *testing.T) {
 
 	if res, err = testClient.Invoke(ctx, &v1.InvokeRequest{
 		Username: "Rick",
-		Target: &v1.Activity{
-			Name:  "Zeep",
-			Label: "C-137",
-		},
-		Arg: "Peace",
+		ActName:  "Zeep",
+		Arg:      "Peace",
 	}); err != nil {
 		t.Fatalf("failed to request to invoke: %v", err)
 	}
 
-	if res.GetResult() != "Zeep@C-137 by Rick with Peace" {
+	if res.GetResult() != "Zeep by Rick with Peace" {
 		t.Fatalf("Undesired result")
 	}
 }

@@ -21,7 +21,6 @@ func (h Handle) InvokeRequested(
 	ctx context.Context,
 	username string,
 	actName string,
-	actLabel string,
 	arg string,
 ) (
 	res *invokerV1.InvokeResponse,

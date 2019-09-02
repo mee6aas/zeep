@@ -33,18 +33,18 @@ func (i *Invoker) Close() (e error) {
 	return
 }
 
-// Register requests register service.
-func (i *Invoker) Register(
+// Add requests add service.
+func (i *Invoker) Add(
 	ctx context.Context,
 	username string,
 	actName string,
 	actDirPath string,
 ) (e error) {
-	_, e = i.Client.Register(ctx, &invokerV1API.RegisterRequest{
+	_, e = i.Client.Add(ctx, &invokerV1API.AddRequest{
 		Username: username,
 		ActName:  actName,
 		Path:     actDirPath,
-		Method:   invokerV1API.RegisterMethod_LOCAL,
+		Method:   invokerV1API.AddMethod_LOCAL,
 	})
 
 	return
@@ -69,7 +69,7 @@ func (i *Invoker) Invoke(
 
 		if res, e = i.Client.Invoke(ctx, &invokerV1API.InvokeRequest{
 			Username: username,
-			Target:   &invokerV1API.Activity{Name: actName},
+			ActName:  actName,
 			Arg:      arg,
 		}); e != nil {
 			return

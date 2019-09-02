@@ -10,8 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// destroyCmd represents the destroy command
-var destroyCmd = &cobra.Command{
+// agentDestroyCmd represents the destroy command
+var agentDestroyCmd = &cobra.Command{
 	Use:   "destroy",
 	Short: "A brief description of your command",
 
@@ -28,7 +28,7 @@ var destroyCmd = &cobra.Command{
 				log.WithError(e).Error("Failed to create Docker client")
 				return
 			}
-			log.Info("Docker client created")
+			log.Debug("Docker client created")
 		}
 
 		{
@@ -43,7 +43,7 @@ var destroyCmd = &cobra.Command{
 
 			if c.ID != "" {
 				contID = c.ID
-				log.WithField("ID", contID).Info("Container that agent runs decided")
+				log.WithField("ID", contID).Debug("Container that agent runs decided")
 			}
 		}
 
@@ -58,7 +58,7 @@ var destroyCmd = &cobra.Command{
 					return
 				}
 
-				log.Info("Container stopped")
+				log.Debug("Container stopped")
 			}
 
 			{
@@ -85,7 +85,7 @@ var destroyCmd = &cobra.Command{
 					log.Warn("Temp direcotry for agent not found")
 				} else {
 					if e = os.RemoveAll(tmpDir); e == nil {
-						log.Info("Temp direcotry for agent removed")
+						log.Debug("Temp direcotry for agent removed")
 					} else {
 						log.WithError(e).Warn("Failed to remove temp direcotry for agent")
 					}
@@ -105,7 +105,7 @@ var destroyCmd = &cobra.Command{
 
 			if n.ID != "" {
 				netID = n.ID
-				log.WithField("ID", netID).Info("Network that agent served decided")
+				log.WithField("ID", netID).Debug("Network that agent served decided")
 			}
 		}
 
@@ -119,7 +119,7 @@ var destroyCmd = &cobra.Command{
 				return
 			}
 
-			log.Info("Network removed")
+			log.Debug("Network removed")
 		}
 
 		return
@@ -127,5 +127,5 @@ var destroyCmd = &cobra.Command{
 }
 
 func init() {
-	agentCmd.AddCommand(destroyCmd)
+	agentCmd.AddCommand(agentDestroyCmd)
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -42,6 +43,10 @@ func AddFromDir(username string, actName string, actDirPath string) (e error) {
 	if acts, ok = activities[username]; !ok {
 		acts = make(map[string]activity.Activity)
 	}
+
+	act.Owner = username
+	act.Name = actName
+	act.AddedDate = time.Now().String()
 
 	acts[actName] = act
 	activities[username] = acts

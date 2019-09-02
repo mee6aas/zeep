@@ -14,13 +14,20 @@ func Entries() (as map[string]activity.Activity) {
 }
 
 // EntriesInUsername returns the activities in given username.
-func EntriesInUsername(username string) (as map[string]activity.Activity) {
-	e, ok := activities[username]
-	if !ok {
+func EntriesInUsername(username string) (as []activity.Activity, ok bool) {
+	var (
+		es map[string]activity.Activity
+	)
+
+	if es, ok = activities[username]; !ok {
 		return
 	}
 
-	as = e
+	as = make([]activity.Activity, 0, len(es))
+
+	for _, v := range es {
+		as = append(as, v)
+	}
 
 	return
 }

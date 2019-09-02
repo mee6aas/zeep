@@ -17,8 +17,8 @@ import (
 	invokerAPI "github.com/mee6aas/zeep/pkg/api/invoker/v1"
 )
 
-// addCmd represents the add command
-var addCmd = &cobra.Command{
+// actAddCmd represents the add command
+var actAddCmd = &cobra.Command{
 	Use:   "add PATH|URL",
 	Short: "Add activity",
 	Args:  cobra.ExactArgs(1),
@@ -125,17 +125,17 @@ var addCmd = &cobra.Command{
 			}
 			client := invokerAPI.NewInvokerClient(conn)
 
-			req := &invokerAPI.RegisterRequest{
+			req := &invokerAPI.AddRequest{
 				Username: optUsername,
 				ActName:  optActName,
-				Method:   invokerAPI.RegisterMethod_LOCAL,
+				Method:   invokerAPI.AddMethod_LOCAL,
 				Path:     trg,
 			}
 
 			log.Debug(req)
 
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-			_, e = client.Register(ctx, req)
+			_, e = client.Add(ctx, req)
 			cancel()
 
 			// TODO: show more information
@@ -148,14 +148,14 @@ var addCmd = &cobra.Command{
 		log.WithFields(log.Fields{
 			"user": optUsername,
 			"name": optActName,
-		}).Info("Activity registered")
+		}).Debug("Activity added")
 
 		return
 	},
 }
 
 func init() {
-	actCmd.AddCommand(addCmd)
+	actCmd.AddCommand(actAddCmd)
 
-	addCmd.Flags().StringVarP(&optActName, "name", "n", "", "name of the activity to add")
+	actAddCmd.Flags().StringVarP(&optActName, "name", "n", "", "name of the activity to add")
 }

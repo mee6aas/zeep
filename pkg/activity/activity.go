@@ -7,6 +7,10 @@ const (
 
 // Activity holds information about activity.
 type Activity struct {
+	Owner     string
+	Name      string
+	AddedDate string
+
 	// Runtime specifies the runtime for this activity.
 	Runtime string `json:"runtime"`
 }

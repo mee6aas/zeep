@@ -12,4 +12,4 @@ RUN go install ./cmd/zeep-agent
 
 EXPOSE 5122
 
-CMD ["zeep-agent"]
+ENTRYPOINT ["zeep-agent"]

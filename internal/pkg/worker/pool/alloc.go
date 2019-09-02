@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
@@ -40,6 +41,8 @@ func (p *Pool) alloc(ctx context.Context, image string) (e error) {
 	}
 
 	p.pendings[w.IP()] = w
+
+	log.WithField("IP", w.IP()).Debug("New worker pended")
 
 	// TODO: update used* fields
 
