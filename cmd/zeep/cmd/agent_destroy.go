@@ -13,8 +13,7 @@ import (
 // agentDestroyCmd represents the destroy command
 var agentDestroyCmd = &cobra.Command{
 	Use:   "destroy",
-	Short: "A brief description of your command",
-
+	Short: "Destory agent",
 	RunE: func(cmd *cobra.Command, args []string) (e error) {
 		var (
 			client *docker.Client
@@ -50,7 +49,9 @@ var agentDestroyCmd = &cobra.Command{
 		if contID != "" {
 			{
 				ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-				e = client.ContainerStop(ctx, contID, nil)
+				timeout := time.Minute
+				// TODO: remove?
+				e = client.ContainerStop(ctx, contID, &timeout)
 				cancel()
 
 				if e != nil {
@@ -58,7 +59,7 @@ var agentDestroyCmd = &cobra.Command{
 					return
 				}
 
-				log.Debug("Container stopped")
+				log.Debug("Container stop requested")
 			}
 
 			{

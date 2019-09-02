@@ -101,8 +101,9 @@ var agentServeCmd = &cobra.Command{
 
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 			res, e := client.ContainerCreate(ctx, &dockerCont.Config{
-				Cmd:   cmd,
-				Image: "mee6aas/zeep:latest",
+				StopSignal: "SIGINT",
+				Cmd:        cmd,
+				Image:      "mee6aas/zeep:latest",
 				Env: []string{
 					api.AgentTmpDirPathEnvKey + "=" + tmpDir,
 					api.AgentNetworkEnvKey + "=" + optAgentNet,

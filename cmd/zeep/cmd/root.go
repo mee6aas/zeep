@@ -13,6 +13,7 @@ import (
 
 var (
 	optDebug     = false                              // show debugs
+	optDetach    = false                              // don't wait until command finish
 	optAgentHost = "0.0.0.0"                          // host of the agent
 	optAgentPort = strconv.Itoa(api.AgentDefaultPort) // port of the agent
 	optAgentName = api.AgentDefaultContainerName      // name of the container that the agent runs

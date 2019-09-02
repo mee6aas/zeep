@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -23,49 +26,61 @@ var rootCmd = &cobra.Command{
 	Use:   "zeep-agent",
 	Short: "zeep-agent is agent of Mee6aaS",
 
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) (e error) {
 		{
 			log.Info("Setting up agent")
 
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
-			err := agent.Setup(ctx, agent.Config{
+			e = agent.Setup(ctx, agent.Config{
 				Pool: pool.Config{Images: []string{"mee6aas/runtime-nodejs:latest"}},
 			})
 			cancel()
 
-			if err != nil {
-				log.WithError(err).Error("Failed to setup agent")
+			if e != nil {
+				log.WithError(e).Error("Failed to setup agent")
 				return
 			}
 
 			log.Info("Agent setup")
 		}
 
-		{
-			log.WithFields(log.Fields{
-				"addr": agentAddr,
-			}).Info("Serving agent")
+		log.WithFields(log.Fields{
+			"addr": agentAddr,
+		}).Info("Serving agent")
 
-			if err := agent.Serve(context.Background(), agentAddr); err != nil {
-				log.WithError(err).Error("Failed to serve agent")
+		wg := sync.WaitGroup{}
+		wg.Add(1)
+		go func() {
+
+			c := make(chan os.Signal, 1)
+			signal.Notify(c, os.Interrupt, syscall.SIGINT)
+			<-c
+
+			{
+				log.Info("Destroying agent")
+
+				ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+				e = agent.Destroy(ctx)
+				cancel()
+
+				if e != nil {
+					log.WithError(e).Error("Failed to destroy agent")
+					return
+				}
 			}
 
-			log.Info("Agent stopped")
+			wg.Done()
+		}()
+
+		if e = agent.Serve(context.Background(), agentAddr); e != nil {
+			log.WithError(e).Error("Failed to serve agent")
 		}
 
-		{
-			log.Info("Destroying agent")
+		log.Info("Agent destroyed")
 
-			ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
-			err := agent.Destroy(ctx)
-			cancel()
+		wg.Wait()
 
-			if err != nil {
-				log.WithError(err).Error("Failed to destroy agent")
-			}
-
-			log.Info("Agent destroyed")
-		}
+		return
 	},
 }
 
