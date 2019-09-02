@@ -12,6 +12,4 @@ var actCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(actCmd)
-
-	actCmd.Flags().StringVarP(&optUsername, "username", "u", "Jerry", "username to use for request")
 }

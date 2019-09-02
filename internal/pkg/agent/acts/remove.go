@@ -20,6 +20,11 @@ func Remove(username string, actName string) (e error) {
 		return
 	}
 
+	if _, ok = acts[actName]; !ok {
+		e = errors.New("Not found")
+		return
+	}
+
 	if e = os.RemoveAll(filepath.Join(rootDirPath, actName)); e != nil {
 		if !os.IsNotExist(e) {
 			return

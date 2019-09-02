@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -12,20 +11,15 @@ import (
 	invokerAPI "github.com/mee6aas/zeep/pkg/api/invoker/v1"
 )
 
-// actInvokeCmd represents the invoke command
-var actInvokeCmd = &cobra.Command{
-	Use:   "invoke ACTIVITY_NAME [ARGUMENT]",
-	Short: "Invoke activity",
-	Args:  cobra.RangeArgs(1, 2),
+// actRmCmd represents the rm command
+var actRmCmd = &cobra.Command{
+	Use:   "rm",
+	Short: "Remove activity",
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) (e error) {
 		var (
 			trg = args[0] // name of the activity to invoke
-			arg string    // argument to be passed to activity
 		)
-
-		if len(args) == 2 {
-			arg = args[1]
-		}
 
 		// make request
 		{
@@ -42,16 +36,15 @@ var actInvokeCmd = &cobra.Command{
 			}
 			client := invokerAPI.NewInvokerClient(conn)
 
-			req := &invokerAPI.InvokeRequest{
+			req := &invokerAPI.RemoveRequest{
 				Username: optUsername,
 				ActName:  trg,
-				Arg:      arg,
 			}
 
 			log.Debug(req)
 
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-			res, e := client.Invoke(ctx, req)
+			_, e = client.Remove(ctx, req)
 			cancel()
 
 			// TODO: show more information
@@ -59,8 +52,6 @@ var actInvokeCmd = &cobra.Command{
 				l.Error("Failed to invoke activity")
 				return e
 			}
-
-			fmt.Println(res.GetResult())
 		}
 
 		return
@@ -68,7 +59,7 @@ var actInvokeCmd = &cobra.Command{
 }
 
 func init() {
-	actCmd.AddCommand(actInvokeCmd)
+	actCmd.AddCommand(actRmCmd)
 
-	actInvokeCmd.Flags().StringVarP(&optUsername, "username", "u", "Jerry", "username to use for request")
+	actRmCmd.Flags().StringVarP(&optUsername, "username", "u", "Jerry", "username to use for request")
 }

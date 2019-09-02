@@ -12,12 +12,12 @@ import (
 )
 
 var (
-	optDebug     bool   // show debugs
-	optAgentHost string // host of the agent
-	optAgentPort string // port of the agent
-	optAgentName string // name of the container that the agent runs
-	optUsername  string // username to use for the request.
-	optActName   string // name of the activity
+	optDebug     = false                              // show debugs
+	optAgentHost = "0.0.0.0"                          // host of the agent
+	optAgentPort = strconv.Itoa(api.AgentDefaultPort) // port of the agent
+	optAgentName = api.AgentDefaultContainerName      // name of the container that the agent runs
+	optUsername  = "Jerry"                            // username to use for the request.
+	optActName   string                               // name of the activity
 )
 
 // rootCmd represents the base command when called without any subcommands

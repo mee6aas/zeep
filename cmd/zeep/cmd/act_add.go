@@ -157,5 +157,6 @@ var actAddCmd = &cobra.Command{
 func init() {
 	actCmd.AddCommand(actAddCmd)
 
+	actAddCmd.Flags().StringVarP(&optUsername, "username", "u", "Jerry", "username to use for request")
 	actAddCmd.Flags().StringVarP(&optActName, "name", "n", "", "name of the activity to add")
 }
