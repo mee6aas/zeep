@@ -51,6 +51,9 @@ func (h Handle) InvokeRequested(
 			return
 		}
 
+		// TODO: move this action into w.AddActs
+		allocs.AddMetadata(username, actName, w)
+
 		// already checked if the username exists
 		actP, _ := acts.PathOf(username)
 		// bind activity resources

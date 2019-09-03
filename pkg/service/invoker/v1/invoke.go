@@ -23,8 +23,11 @@ func (s *invokerAPIServer) Invoke(
 	in *apiV1.InvokeRequest,
 ) (out *apiV1.InvokeResponse, e error) {
 	var (
-		addr *net.TCPAddr
+		addr     *net.TCPAddr
+		username string
 	)
+
+	username = in.GetUsername()
 
 	if p, ok := peer.FromContext(ctx); ok {
 		addr = p.Addr.(*net.TCPAddr)
@@ -35,22 +38,35 @@ func (s *invokerAPIServer) Invoke(
 
 	l := log.WithFields(log.Fields{
 		"addr": addr.String(),
-		"user": in.GetUsername(),
+		"user": username,
 		"name": in.GetActName(),
 	})
 
 	l.Info("Activity invoke requested")
 
-	out, e = s.handle.InvokeRequested(ctx,
-		in.GetUsername(),
+	defer func() {
+		if e != nil {
+			l.WithError(e).Warn("Activity invoke refused")
+		} else {
+			l.Info("Activity invoke added")
+		}
+	}()
+
+	if username == "" {
+		if username, e = s.handle.ResolveNameFromIP(ctx, addr.IP.String()); e != nil {
+			// username not found
+			e = status.Error(codes.PermissionDenied, "Username not found from IP")
+			return
+		}
+	}
+
+	if out, e = s.handle.InvokeRequested(ctx,
+		username,
 		in.GetActName(),
 		in.GetArg(),
-	)
-
-	if e != nil {
-		l.WithError(e).Warn("Activity invoke refused")
-	} else {
-		l.Info("Activity invoke added")
+	); e != nil {
+		e = status.Error(codes.Unknown, "Unknown")
+		return
 	}
 
 	return

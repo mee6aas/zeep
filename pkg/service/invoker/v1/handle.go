@@ -9,6 +9,9 @@ import (
 // InvokerAPIServerHandle handles server events.
 type InvokerAPIServerHandle interface {
 
+	// ctx, IP of requester
+	ResolveNameFromIP(context.Context, string) (string, error)
+
 	// ctx, username, actNAme, arg
 	InvokeRequested(context.Context, string, string, string) (*InvokeResponse, error)
 

@@ -11,6 +11,13 @@ import (
 type mockHandle struct {
 }
 
+func (h *mockHandle) ResolveNameFromIP(
+	_ context.Context,
+	ip string,
+) (n string, e error) {
+	return
+}
+
 func (h *mockHandle) InvokeRequested(
 	_ context.Context,
 	username string,

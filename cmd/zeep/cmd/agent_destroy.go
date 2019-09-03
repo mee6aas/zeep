@@ -10,6 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO:
+// it fails to remove temp directory when there is exited container.
+
 // agentDestroyCmd represents the destroy command
 var agentDestroyCmd = &cobra.Command{
 	Use:   "destroy",
