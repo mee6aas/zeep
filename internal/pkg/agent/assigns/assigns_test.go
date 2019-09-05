@@ -8,7 +8,7 @@ import (
 )
 
 func TestAssigns(t *testing.T) {
-	id, c := assigns.Add()
+	id, c := assigns.Add("0.0.0.0", "Jerry")
 
 	t.Logf("id %v", id)
 

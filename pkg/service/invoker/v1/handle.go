@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"net"
 
 	"github.com/mee6aas/zeep/pkg/activity"
 )
@@ -9,11 +10,8 @@ import (
 // InvokerAPIServerHandle handles server events.
 type InvokerAPIServerHandle interface {
 
-	// ctx, IP of requester
-	ResolveNameFromIP(context.Context, string) (string, error)
-
-	// ctx, username, actNAme, arg
-	InvokeRequested(context.Context, string, string, string) (*InvokeResponse, error)
+	// ctx, address, username, actNAme, arg
+	InvokeRequested(context.Context, *net.TCPAddr, string, string, string) (*InvokeResponse, error)
 
 	// ctx, username, actName, actDirPath
 	AddRequested(context.Context, string, string, string) error

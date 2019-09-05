@@ -48,19 +48,12 @@ func (s *invokerAPIServer) Invoke(
 		if e != nil {
 			l.WithError(e).Warn("Activity invoke refused")
 		} else {
-			l.Info("Activity invoke added")
+			l.Info("Activity invoked")
 		}
 	}()
 
-	if username == "" {
-		if username, e = s.handle.ResolveNameFromIP(ctx, addr.IP.String()); e != nil {
-			// username not found
-			e = status.Error(codes.PermissionDenied, "Username not found from IP")
-			return
-		}
-	}
-
 	if out, e = s.handle.InvokeRequested(ctx,
+		addr,
 		username,
 		in.GetActName(),
 		in.GetArg(),

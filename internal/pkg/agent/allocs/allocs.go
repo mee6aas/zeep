@@ -7,6 +7,4 @@ import (
 var (
 	//               usernmae   actName
 	allocs = make(map[string]map[string][]worker.Worker)
-	//					 IP    username
-	nameTable = make(map[string]string)
 )

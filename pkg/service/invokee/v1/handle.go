@@ -10,4 +10,5 @@ type InvokeeAPIServerHandle interface {
 	Connected(context.Context, *net.TCPAddr, chan<- Task) error
 	Disconnected(*net.TCPAddr)
 	Reported(*ReportRequest) error
+	HandoverRequested(*net.TCPAddr) error
 }

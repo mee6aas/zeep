@@ -29,9 +29,3 @@ func Add(username string, actName string, w worker.Worker) (ok bool) {
 
 	return
 }
-
-// AddMetadata inserst metadata but not inserts container in collection.
-// TODO: how about split metadata things to another package? yes it should be.
-func AddMetadata(username string, _ string, w worker.Worker) {
-	nameTable[w.IP()] = username
-}

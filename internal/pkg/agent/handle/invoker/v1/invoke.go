@@ -2,9 +2,11 @@ package v1
 
 import (
 	"context"
+	"net"
 	"time"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
 	"github.com/mee6aas/zeep/internal/pkg/agent/allocs"
@@ -19,6 +21,7 @@ import (
 // InvokeRequested is invoked when the invoker requests an activity invoke.
 func (h Handle) InvokeRequested(
 	ctx context.Context,
+	addr *net.TCPAddr,
 	username string,
 	actName string,
 	arg string,
@@ -31,6 +34,17 @@ func (h Handle) InvokeRequested(
 		a  activity.Activity
 		w  worker.Worker
 	)
+
+	l := log.WithField("addr", addr.String())
+
+	// the username is omitted for the invoked worker which invokes another
+	if username == "" {
+		if username, ok = assigns.GetAssigneeFromIP(addr.IP.String()); !ok {
+			l.Warn("Username empty")
+			e = errors.New("Not found")
+			return
+		}
+	}
 
 	// read activity manifest
 	if a, ok = acts.Read(username, actName); !ok {
@@ -51,15 +65,12 @@ func (h Handle) InvokeRequested(
 			return
 		}
 
-		// TODO: move this action into w.AddActs
-		allocs.AddMetadata(username, actName, w)
-
 		// already checked if the username exists
 		actP, _ := acts.PathOf(username)
 		// bind activity resources
 		w.AddActs(actP)
 
-		loadID, c := assigns.Add()
+		loadID, c := assigns.Add(w.IP(), username)
 
 		// warming worker
 		if e = w.Assign(ctx, invokeeV1API.Task{
@@ -67,7 +78,7 @@ func (h Handle) InvokeRequested(
 			Type: invokeeV1API.TaskType_LOAD,
 			Arg:  actName,
 		}); e != nil {
-			e = errors.Wrap(e, "Failed to assign load task to worker")
+			e = errors.Wrap(e, "Failed to assign task for load to worker")
 
 			defer func() {
 				ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
@@ -91,7 +102,7 @@ func (h Handle) InvokeRequested(
 	}
 
 	// add assignment to list
-	invID, c := assigns.Add()
+	invID, c := assigns.Add(w.IP(), username)
 
 	// assign task to worker
 	if e = w.Assign(ctx, invokeeV1API.Task{

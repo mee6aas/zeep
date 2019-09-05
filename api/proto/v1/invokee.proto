@@ -6,6 +6,7 @@ option go_package = "v1";
 service Invokee {
     rpc Listen (ListenRequest) returns (stream Task){};
     rpc Report (ReportRequest) returns (ReportResponse){};
+    rpc Handover (HandoverRequest) returns (HandoverResponse){};
 }
 
 message ListenRequest {}
@@ -29,3 +30,6 @@ message ReportRequest {
 }
 
 message ReportResponse {}
+
+message HandoverRequest {}
+message HandoverResponse {}

@@ -3,6 +3,7 @@ package v1_test
 import (
 	"context"
 	"fmt"
+	"net"
 
 	"github.com/mee6aas/zeep/pkg/activity"
 	v1 "github.com/mee6aas/zeep/pkg/service/invoker/v1"
@@ -11,15 +12,9 @@ import (
 type mockHandle struct {
 }
 
-func (h *mockHandle) ResolveNameFromIP(
-	_ context.Context,
-	ip string,
-) (n string, e error) {
-	return
-}
-
 func (h *mockHandle) InvokeRequested(
 	_ context.Context,
+	address *net.TCPAddr,
 	username string,
 	actName string,
 	arg string,

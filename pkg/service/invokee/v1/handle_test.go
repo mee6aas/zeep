@@ -43,3 +43,7 @@ func (h *mockHandle) Disconnected(_ *net.TCPAddr) {
 func (h *mockHandle) Reported(_ *v1.ReportRequest) (e error) {
 	return
 }
+
+func (h *mockHandle) HandoverRequested(_ *net.TCPAddr) (e error) {
+	return
+}

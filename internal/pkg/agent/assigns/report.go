@@ -3,16 +3,16 @@ package assigns
 // Report passes result of the invocation to the invoker.
 func Report(invkID string, rst interface{}) (ok bool) {
 	var (
-		c chan interface{}
+		a assign
 	)
 
-	if c, ok = assigns[invkID]; !ok {
+	if a, ok = assigns[invkID]; !ok {
 		return
 	}
 
-	c <- rst
+	a.holder <- rst
 
-	close(c)
+	close(a.holder)
 	delete(assigns, invkID)
 
 	return
