@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
+	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
 )
 
 func TestSetUpAndDestory(t *testing.T) {

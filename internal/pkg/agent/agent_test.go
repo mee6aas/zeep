@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/mee6aas/zeep/internal/pkg/agent"
-	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
 	"github.com/mee6aas/zeep/internal/pkg/agent/mock/invokee"
+	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
 	"github.com/mee6aas/zeep/internal/pkg/worker/pool"
 )
 

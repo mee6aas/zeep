@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/assigns"
+	assigns "github.com/mee6aas/zeep/internal/pkg/var/assignments"
 )
 
 func TestAssigns(t *testing.T) {

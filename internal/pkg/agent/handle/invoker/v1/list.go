@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
+	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
 	"github.com/mee6aas/zeep/pkg/activity"
 )
 

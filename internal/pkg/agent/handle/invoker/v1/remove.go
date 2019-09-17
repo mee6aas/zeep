@@ -3,7 +3,7 @@ package v1
 import (
 	"context"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
+	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
 )
 
 // RemoveRequested is invoked when the invoker requests to remove an activity.

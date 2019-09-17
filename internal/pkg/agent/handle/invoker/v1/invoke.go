@@ -8,9 +8,9 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
-	"github.com/mee6aas/zeep/internal/pkg/agent/allocs"
-	"github.com/mee6aas/zeep/internal/pkg/agent/assigns"
+	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
+	assigns "github.com/mee6aas/zeep/internal/pkg/var/assignments"
+	allocs "github.com/mee6aas/zeep/internal/pkg/var/workers/allocated"
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 	"github.com/mee6aas/zeep/pkg/activity"
 

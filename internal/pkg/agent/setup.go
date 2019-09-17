@@ -3,7 +3,7 @@ package agent
 import (
 	"context"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
+	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
 	"github.com/mee6aas/zeep/internal/pkg/worker/pool"
 )
 

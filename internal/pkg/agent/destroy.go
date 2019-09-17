@@ -5,8 +5,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/acts"
-	"github.com/mee6aas/zeep/internal/pkg/agent/allocs"
+	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
+	allocs "github.com/mee6aas/zeep/internal/pkg/var/workers/allocated"
 )
 
 // Destroy removes agent resources.

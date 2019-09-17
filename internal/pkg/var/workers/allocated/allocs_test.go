@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/allocs"
+	allocs "github.com/mee6aas/zeep/internal/pkg/var/workers/allocated"
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 

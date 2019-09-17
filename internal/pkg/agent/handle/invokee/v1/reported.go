@@ -4,7 +4,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/mee6aas/zeep/internal/pkg/agent/assigns"
+	assigns "github.com/mee6aas/zeep/internal/pkg/var/assignments"
 	v1 "github.com/mee6aas/zeep/pkg/api/invokee/v1"
 )
 

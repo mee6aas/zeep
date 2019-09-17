@@ -42,5 +42,5 @@ func (s *invokeeAPIServer) Handover(
 		e = status.Error(codes.PermissionDenied, "Non-listener worker has no control to handover")
 	}
 
-	return status.Error(codes.Unimplemented, "unimplemented")
+	return nil, status.Error(codes.Unimplemented, "unimplemented")
 }
