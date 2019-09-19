@@ -34,13 +34,12 @@ func (s *invokeeAPIServer) Handover(
 
 	l.Info("Worker handover requested")
 
-	out = &apiV1.HandoverResponse{}
-
-	e = s.handle.HandoverRequested(addr)
-
-	if e != nil {
+	if e = s.handle.HandoverRequested(addr); e != nil {
 		e = status.Error(codes.PermissionDenied, "Non-listener worker has no control to handover")
+		return
 	}
 
-	return nil, status.Error(codes.Unimplemented, "unimplemented")
+	out = &apiV1.HandoverResponse{}
+
+	return
 }

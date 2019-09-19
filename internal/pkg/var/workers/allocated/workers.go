@@ -1,4 +1,4 @@
-package allocs
+package workers
 
 import (
 	"github.com/mee6aas/zeep/internal/pkg/worker"
@@ -6,5 +6,5 @@ import (
 
 var (
 	//               usernmae   actName
-	allocs = make(map[string]map[string][]worker.Worker)
+	workers = make(map[string]map[string][]worker.Worker)
 )

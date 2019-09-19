@@ -26,7 +26,7 @@ var (
 // Container describes container.
 type Container struct {
 	id string // ID of container
-	ip string // TCP address of container
+	ip string // IP of container
 }
 
 // ID returns the ID of this container.

@@ -15,6 +15,7 @@ enum TaskType {
     UNKNOWN = 0;
     LOAD = 1;
     INVOKE = 2;
+    HANDOVER = 3;
 }
 
 message Task {

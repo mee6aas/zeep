@@ -12,6 +12,7 @@ import (
 type mockTA struct{}
 
 func (ta mockTA) Assign(context.Context, interface{}) (err error) { return }
+func (ta mockTA) Close()                                          {}
 
 var (
 	testImage = "mee6aas/runtime-test:latest"

@@ -8,7 +8,7 @@ import (
 	"github.com/mee6aas/zeep/pkg/activity"
 )
 
-// Remove deletes activity from collection with given username and actName.
+// Remove remvoes an activity with the specified username and activity name from the collection.
 func Remove(username string, actName string) (e error) {
 	var (
 		ok   bool

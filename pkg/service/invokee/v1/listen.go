@@ -1,9 +1,9 @@
 package v1
 
 import (
-	"context"
 	"net"
 
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/peer"
@@ -21,16 +21,17 @@ func (s *invokeeAPIServer) Listen(
 	stream apiV1.Invokee_ListenServer,
 ) (e error) {
 	var (
-		addr      *net.TCPAddr
-		conn      chan Task
-		ctxStream context.Context
-		ccStream  context.CancelFunc
+		ctx  = stream.Context()
+		err  error
+		addr *net.TCPAddr
+		conn chan Task
 	)
 
-	if p, ok := peer.FromContext(stream.Context()); ok {
+	if p, ok := peer.FromContext(ctx); ok {
 		addr = p.Addr.(*net.TCPAddr)
 	} else {
 		e = status.Error(codes.Unknown, "Failed to resolve request information")
+
 		return
 	}
 
@@ -41,32 +42,42 @@ func (s *invokeeAPIServer) Listen(
 	l.Info("Worker listen requested")
 
 	defer func() {
-		if e != nil {
-			l.WithError(e).Warn("Worker listen refused")
+		if err != nil {
+			l.WithError(err).Warn("Worker listen failed with error")
 		}
 	}()
 
 	conn = make(chan Task, 1)
-	ctxStream, ccStream = context.WithCancel(context.Background())
-	defer ccStream()
 
-	if e = s.handle.Connected(ctxStream, addr, conn); e != nil {
-		e = status.Errorf(codes.PermissionDenied, "Operation refused: %s", e.Error())
+	if err = s.handle.Connected(ctx, addr, conn); err != nil {
+		err = errors.Wrap(err, "Handle:Connected returns error")
+		e = status.Errorf(codes.PermissionDenied, "Operation refused: %s", err.Error())
+
 		return
 	}
 
 	l.Info("Connected")
 
-	go func() {
-		defer ccStream()
-		for task := range conn {
-			if e := stream.Send(&task); e != nil {
-				return
+FORWARD:
+	for {
+		select {
+		case task, ok := <-conn:
+			if !ok {
+				// Task assigner closes the channel
+				break FORWARD
 			}
-		}
-	}()
 
-	<-ctxStream.Done()
+			if err = stream.Send(&task); err != nil {
+				err = errors.Wrap(err, "Failed to send task")
+
+				break
+			}
+
+		case <-ctx.Done():
+			break FORWARD
+		}
+	}
+
 	s.handle.Disconnected(addr)
 
 	l.Info("Disconnected")

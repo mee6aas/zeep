@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Setup initializes acts.
+// Setup initializes the collection.
 func Setup(config Config) (e error) {
 	if IsSetup() {
 		return

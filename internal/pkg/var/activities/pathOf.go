@@ -2,7 +2,7 @@ package acts
 
 import "path/filepath"
 
-// PathOf returns directory path of resource used by given username.
+// PathOf returns the path of the resource used by specified username.
 func PathOf(username string) (p string, ok bool) {
 	if _, ok = activities[username]; !ok {
 		return

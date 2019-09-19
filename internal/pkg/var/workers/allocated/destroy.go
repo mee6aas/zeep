@@ -1,4 +1,4 @@
-package allocs
+package workers
 
 import (
 	"context"
@@ -7,11 +7,11 @@ import (
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
-// Destroy removes allocated workers.
+// Destroy removes all workers in the collection.
 func Destroy(ctx context.Context) (e error) {
 	wg := sync.WaitGroup{}
 
-	for _, es := range allocs {
+	for _, es := range workers {
 		for _, ws := range es {
 			for _, w := range ws {
 				wg.Add(1)

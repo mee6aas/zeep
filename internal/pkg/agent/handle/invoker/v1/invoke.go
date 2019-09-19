@@ -6,11 +6,12 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 
 	acts "github.com/mee6aas/zeep/internal/pkg/var/activities"
 	assigns "github.com/mee6aas/zeep/internal/pkg/var/assignments"
-	allocs "github.com/mee6aas/zeep/internal/pkg/var/workers/allocated"
+	allocatedWorkers "github.com/mee6aas/zeep/internal/pkg/var/workers/allocated"
+	invokedWorkers "github.com/mee6aas/zeep/internal/pkg/var/workers/invoked"
+	loadedWorkers "github.com/mee6aas/zeep/internal/pkg/var/workers/loaded"
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 	"github.com/mee6aas/zeep/pkg/activity"
 
@@ -35,13 +36,15 @@ func (h Handle) InvokeRequested(
 		w  worker.Worker
 	)
 
-	l := log.WithField("addr", addr.String())
+	if actName == "" {
+		e = errors.New("Empty activity name")
+		return
+	}
 
 	// the username is omitted for the invoked worker which invokes another
 	if username == "" {
 		if username, ok = assigns.GetAssigneeFromIP(addr.IP.String()); !ok {
-			l.Warn("Username empty")
-			e = errors.New("Not found")
+			e = errors.New("Username not found")
 			return
 		}
 	}
@@ -53,7 +56,7 @@ func (h Handle) InvokeRequested(
 	}
 
 	// get worker
-	if w, ok = allocs.Take(username, actName); !ok {
+	if w, ok = allocatedWorkers.TryTake(username, actName); !ok {
 		// warm worker not exists
 		if w, e = h.WorkerPool.Fetch(ctx, a.Runtime); e != nil {
 			// TODO: provide details of error
@@ -71,6 +74,12 @@ func (h Handle) InvokeRequested(
 		w.AddActs(actP)
 
 		loadID, c := assigns.Add(w.IP(), username)
+
+		if ok = loadedWorkers.Add(&w); !ok {
+			// never happens
+			e = errors.New("Already loaded worker")
+			return
+		}
 
 		// warming worker
 		if e = w.Assign(ctx, invokeeV1API.Task{
@@ -95,47 +104,74 @@ func (h Handle) InvokeRequested(
 		// wait load task finished
 		rst := <-c
 
+		if ok = loadedWorkers.Remove(&w); !ok {
+			// never happens
+			e = errors.New("Worker never loaded")
+			return
+		}
+
 		// deallocated while invocation
 		if rst == nil {
 			// TODO:
 		}
 	}
 
-	// add assignment to list
-	invID, c := assigns.Add(w.IP(), username)
-
-	// assign task to worker
-	if e = w.Assign(ctx, invokeeV1API.Task{
-		Id:   invID,
-		Type: invokeeV1API.TaskType_INVOKE,
-		Arg:  arg,
-	}); e != nil {
-		e = errors.Wrap(e, "Failed to assign task to worker")
-		return
-	}
-
-	// wait task finished
-	rst := <-c
-
-	// deallocated while invocation
-	if rst == nil {
-		// TODO:
-	}
-
-	switch r := rst.(type) {
-	case *invokeeV1API.ReportRequest:
-		res = &invokerV1.InvokeResponse{
-			Result: r.GetResult(),
+	// invoke
+	{
+		ip := w.IP()
+		if ip == "" {
+			e = errors.New("IP of the worker is not decided")
+			return
 		}
-	default:
-		panic(errors.Errorf("Unrecognized report request %v", rst))
+
+		// add assignment to list
+		invID, c := assigns.Add(ip, username)
+
+		if ok = invokedWorkers.Add(&w); !ok {
+			// never happens
+			e = errors.New("Already invoked worker")
+			return
+		}
+
+		// assign a task to the worker
+		if e = w.Assign(ctx, invokeeV1API.Task{
+			Id:   invID,
+			Type: invokeeV1API.TaskType_INVOKE,
+			Arg:  arg,
+		}); e != nil {
+			e = errors.Wrap(e, "Failed to assign task to worker")
+			return
+		}
+
+		// wait task finished
+		rst := <-c
+
+		if ok = invokedWorkers.Remove(&w); !ok {
+			// never happens
+			e = errors.New("Worker never invoked")
+			return
+		}
+
+		// deallocated while invocation
+		if rst == nil {
+			// TODO:
+		}
+
+		switch r := rst.(type) {
+		case *invokeeV1API.ReportRequest:
+			res = &invokerV1.InvokeResponse{
+				Result: r.GetResult(),
+			}
+		default:
+			panic(errors.Errorf("Unrecognized report request %v", rst))
+		}
 	}
 
-	// resolve worker
+	// resolve a worker
 	w.Resolve()
 
-	// maintain worker
-	if ok = allocs.Add(username, actName, w); !ok {
+	// maintain a worker
+	if ok = allocatedWorkers.TryAdd(username, actName, w); !ok {
 		defer func() {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 			defer cancel()

@@ -48,9 +48,6 @@ func (w Worker) IsAssigned() bool { return w.isAssigned }
 // Resolve set isAssigned flag to false
 func (w *Worker) Resolve() { w.isAssigned = false }
 
-// Dealloc set isAllocated flag to false
-func (w *Worker) Dealloc() { w.isAllocated = false }
-
 // Config holds the configuration for the worker.
 type Config struct {
 	Image string // Image to use

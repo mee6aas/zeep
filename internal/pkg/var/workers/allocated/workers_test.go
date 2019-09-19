@@ -1,21 +1,20 @@
-package allocs_test
+package workers_test
 
 import (
 	"context"
 	"testing"
 
-	allocs "github.com/mee6aas/zeep/internal/pkg/var/workers/allocated"
+	workers "github.com/mee6aas/zeep/internal/pkg/var/workers/allocated"
 	"github.com/mee6aas/zeep/internal/pkg/worker"
 )
 
 type mockTaskAssigner struct{}
 
 func (m mockTaskAssigner) Assign(context.Context, interface{}) (err error) { return }
+func (m mockTaskAssigner) Close()                                          {}
 
 func TestAllocs(t *testing.T) {
 	var (
-		ok bool
-
 		username = "Jerry"
 		actName  = "m6s"
 
@@ -23,11 +22,11 @@ func TestAllocs(t *testing.T) {
 		w = worker.Worker{InvokeeVersion: v}
 	)
 
-	if ok = allocs.Add(username, actName, w); ok {
+	if err := workers.Add(username, actName, w); err == nil {
 		t.Fatal("Expected to fail to add worker")
 	}
 
-	if _, ok = allocs.Take(username, actName); ok {
+	if _, err := workers.Take(username, actName); err == nil {
 		t.Fatal("Expected to fail to take worker")
 	}
 
@@ -35,12 +34,13 @@ func TestAllocs(t *testing.T) {
 		t.Fatal("Failed to allocate a worker")
 	}
 
-	if ok = allocs.Add(username, actName, w); !ok {
-		t.Fatal("Expected to add worker")
+	if err := workers.Add(username, actName, w); err != nil {
+		t.Fatal("Expected to insert a worker")
 	}
 
-	if w, ok = allocs.Take(username, actName); !ok {
-		t.Fatal("Expected to take worker")
+	w, err := workers.Take(username, actName)
+	if err != nil {
+		t.Fatal("Expected to take a worker")
 	}
 
 	if w.InvokeeVersion != v {

@@ -1,8 +1,8 @@
 package assigns
 
-// GetAssigneeFromIP returns username who invokes an activity processed in given address.
+// GetAssigneeFromIP gets the username of the assignee that matches the specified address.
 func GetAssigneeFromIP(addr string) (u string, ok bool) {
-	for _, v := range assigns {
+	for _, v := range assignments {
 		if v.address == addr {
 			u = v.assignee
 			ok = true

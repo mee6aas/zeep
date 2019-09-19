@@ -16,7 +16,7 @@ import (
 	"github.com/mee6aas/zeep/pkg/activity"
 )
 
-// AddFromDir inserts activity in given directory to collection with given username and activity name.
+// AddFromDir adds an activity at the specified directory with the specified username and activity name to collection.
 func AddFromDir(username string, actName string, actDirPath string) (e error) {
 	if !IsSetup() {
 		e = errors.New("Acts not setup")
@@ -54,7 +54,7 @@ func AddFromDir(username string, actName string, actDirPath string) (e error) {
 	return
 }
 
-// AddFromTarGz inserts activity from given Gzip to collection with given username and activity name.
+// AddFromTarGz adds an activity at the specified Gzip with the specified username and activity name to collection.
 // The file `actTarGzPath` must be gzipped tarball.
 func AddFromTarGz(username string, actName string, actTarGzPath string) (e error) {
 	var (
@@ -81,8 +81,8 @@ func AddFromTarGz(username string, actName string, actTarGzPath string) (e error
 	return
 }
 
-// AddFromHTTP inserts activity from given HTTP address to collection with given username and activity name.
-// The address `actAddr` must be http and must returns gzipped tarball.
+// AddFromHTTP adds an activity at the specified HTTP address with specified username and activity name to collection.
+// The address `actAddr` must be http address and must response gzipped tarball as the attachment.
 func AddFromHTTP(username string, actName string, actAddr string) (e error) {
 	var (
 		res *http.Response

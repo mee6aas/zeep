@@ -5,7 +5,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Add inserts an assign and return id of inserted assign.
+// Add adds an assignment into the collection with specified username and activity name.
+// It returns the ID of the new assignment and the channel that receives a result of the assignment.
 func Add(addr string, username string) (invkID string, c chan interface{}) {
 	var (
 		err error
@@ -20,13 +21,13 @@ func Add(addr string, username string) (invkID string, c chan interface{}) {
 
 		invkID = id.String()
 
-		if _, ok := assigns[invkID]; !ok {
+		if _, ok := assignments[invkID]; !ok {
 			break
 		}
 	}
 
 	c = make(chan interface{})
-	assigns[invkID] = assign{
+	assignments[invkID] = assign{
 		id:       invkID,
 		assignee: username,
 		address:  addr,

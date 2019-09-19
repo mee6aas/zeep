@@ -13,7 +13,7 @@ type TaskAssigner struct {
 	stream chan<- v1.Task
 }
 
-// Assign sends a task to the worker.
+// Assign sends the specified task to the worker.
 func (ta TaskAssigner) Assign(ctx context.Context, t interface{}) (e error) {
 	select {
 	case <-ta.ctx.Done():
@@ -25,4 +25,9 @@ func (ta TaskAssigner) Assign(ctx context.Context, t interface{}) (e error) {
 
 	return
 
+}
+
+// Close closes the connected channel
+func (ta TaskAssigner) Close() {
+	close(ta.stream)
 }
