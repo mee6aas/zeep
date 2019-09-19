@@ -23,6 +23,7 @@ func (s *invokerAPIServer) Invoke(
 	in *apiV1.InvokeRequest,
 ) (out *apiV1.InvokeResponse, e error) {
 	var (
+		err      error
 		addr     *net.TCPAddr
 		username string
 	)
@@ -45,19 +46,19 @@ func (s *invokerAPIServer) Invoke(
 	l.Info("Activity invoke requested")
 
 	defer func() {
-		if e != nil {
-			l.WithError(e).Warn("Activity invoke refused")
+		if err != nil {
+			l.WithError(err).Warn("Activity invoke refused")
 		} else {
 			l.Info("Activity invoked")
 		}
 	}()
 
-	if out, e = s.handle.InvokeRequested(ctx,
+	if out, err = s.handle.InvokeRequested(ctx,
 		addr,
 		username,
 		in.GetActName(),
 		in.GetArg(),
-	); e != nil {
+	); err != nil {
 		e = status.Error(codes.Unknown, "Unknown")
 		return
 	}

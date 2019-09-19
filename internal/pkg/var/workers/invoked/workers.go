@@ -5,6 +5,6 @@ import (
 )
 
 var (
-	//		   Cont.IP
-	workers map[string]*worker.Worker
+	//		   		  Cont.IP
+	workers = make(map[string]*worker.Worker)
 )
