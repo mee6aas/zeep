@@ -37,25 +37,37 @@ func (c Container) IP() string { return c.ip }
 
 // Config holds the configuration for the container.
 type Config struct {
-	Image   string // Image to create container
-	Storage string // Path of the directory to be mounted on container
+	Image      string // Image to create container
+	Storage    string // Path of the directory to be mounted on container
+	Entrypoint []string
+	Cmd        []string
 }
 
 // NewContainer creates a new container based on the given configuration
 // and returns its descriptor.
-func NewContainer(ctx context.Context, config Config) (c Container, e error) {
-	res, e := engineClient.ContainerCreate(ctx, &dockerCont.Config{
-		Image: config.Image,
+func NewContainer(ctx context.Context, conf Config) (c Container, e error) {
+	cConf := &dockerCont.Config{
+		Image: conf.Image,
 		Env: []string{
 			api.AgentHostEnvKey + "=" + agentHost,
 			api.AgentPortEnvKey + "=" + agentPort,
 		},
-	}, &dockerCont.HostConfig{
+	}
+
+	if conf.Entrypoint != nil {
+		cConf.Entrypoint = conf.Entrypoint
+	}
+
+	if conf.Cmd != nil {
+		cConf.Cmd = conf.Cmd
+	}
+
+	res, e := engineClient.ContainerCreate(ctx, cConf, &dockerCont.HostConfig{
 		NetworkMode: dockerCont.NetworkMode(agentNet),
 		Mounts: []dockerMnt.Mount{
 			dockerMnt.Mount{
 				Type:   dockerMnt.TypeBind,
-				Source: config.Storage,
+				Source: conf.Storage,
 				Target: api.ActivityStorage,
 				BindOptions: &dockerMnt.BindOptions{
 					Propagation: dockerMnt.PropagationShared,
