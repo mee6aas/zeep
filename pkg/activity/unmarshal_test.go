@@ -1,7 +1,10 @@
 package activity_test
 
 import (
+	"fmt"
 	"testing"
+
+	"gotest.tools/assert"
 
 	"github.com/mee6aas/zeep/pkg/activity"
 )
@@ -9,29 +12,31 @@ import (
 // TODO: more testcases
 
 func TestUnmarshalFromFile(t *testing.T) {
-	p := "./testdata/valid/activity.json"
+	{
+		const (
+			testActivity    = "./testdata/withoutDeps.json"
+			expectedRuntime = "mee6aas/runtime-nodejs"
+		)
 
-	a, e := activity.UnmarshalFromFile(p)
-
-	if e != nil {
-		t.Fatalf("Expected to unmarshal %s: %v", p, e)
+		a, e := activity.UnmarshalFromFile(testActivity)
+		assert.NilError(t, e,
+			fmt.Sprintf("Expected to unmarshal %s\n", testActivity))
+		assert.Equal(t, a.Runtime, expectedRuntime,
+			fmt.Sprintf("Expected that the runtime is %s\n", expectedRuntime))
+		assert.Equal(t, len(a.Dependencies), 0,
+			"Expected that the runtime has no dependencies\n")
 	}
 
-	if r := a.Runtime; r != "mee6aas/runtime-nodejs" {
-		t.Fatalf("Expected that the runtime is mee6aas/nodejs but %s", r)
-	}
-}
+	{
+		const testActivity = "./testdata/withDeps.json"
+		var expectedDpes = []activity.Descriptor{
+			activity.Descriptor{Name: "meeseeks1"},
+			activity.Descriptor{Name: "meeseeks2"},
+		}
 
-func TestUnmarshalFromDir(t *testing.T) {
-	p := "./testdata/valid"
-
-	a, e := activity.UnmarshalFromDir(p)
-
-	if e != nil {
-		t.Fatalf("Expected to unmarshal %s: %v", p, e)
-	}
-
-	if r := a.Runtime; r != "mee6aas/runtime-nodejs" {
-		t.Fatalf("Expected that the runtime is mee6aas/nodejs but %s", r)
+		a, e := activity.UnmarshalFromFile(testActivity)
+		assert.NilError(t, e,
+			fmt.Sprintf("Expected to unmarshal %s\n", testActivity))
+		assert.DeepEqual(t, a.Dependencies, expectedDpes)
 	}
 }

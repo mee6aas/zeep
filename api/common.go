@@ -52,6 +52,9 @@ const (
 	// If the activity name is `ACTIVITY_NAME`, the resource to load activity is in /act/rsc/`ACTIVITY_NAME`.
 	ActivityResource = "/act/rsc"
 
+	// ActivityManifestName is the name of the file that specifies the activity.
+	ActivityManifestName = "activity.json"
+
 	// WorkflowStorage is the path of the directory shared across the workflow.
 	WorkflowStorage = "/act/flow"
 

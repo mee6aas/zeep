@@ -5,14 +5,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/mholt/archiver"
 	"github.com/otiai10/copy"
+	"github.com/pkg/errors"
 
+	"github.com/mee6aas/zeep/api"
 	"github.com/mee6aas/zeep/pkg/activity"
 )
 
@@ -29,7 +30,7 @@ func AddFromDir(username string, actName string, actDirPath string) (e error) {
 		acts map[string]activity.Activity
 	)
 
-	if act, e = activity.UnmarshalFromDir(actDirPath); e != nil {
+	if act, e = activity.UnmarshalFromFile(path.Join(actDirPath, api.ActivityManifestName)); e != nil {
 		e = errors.Wrapf(e, "Failed to unmarshal from %s", actDirPath)
 		return
 	}

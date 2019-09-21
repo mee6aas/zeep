@@ -1,0 +1,12 @@
+{
+    "name": "Jerry",
+    "runtime": "nodejs",
+    "dependencies": [
+        {
+            "name": "meeseeks1"
+        },
+        {
+            "name": "meeseeks2"
+        }
+    ]
+}
