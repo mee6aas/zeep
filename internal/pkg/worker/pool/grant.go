@@ -1,15 +1,21 @@
 package pool
 
-import "github.com/mee6aas/zeep/internal/pkg/worker"
+import (
+	log "github.com/sirupsen/logrus"
+
+	"github.com/mee6aas/zeep/internal/pkg/worker"
+)
 
 // Grant move worker in pending list to ready list.
-func (p *Pool) Grant(ip string, ta worker.TaskAssigner, version string) (ok bool) {
+func (p *Pool) Grant(ip string, ta worker.TaskAssigner, version string) bool {
 	var (
 		w worker.Worker
 	)
 
-	if w, ok = p.pendings[ip]; !ok {
-		return
+	w, ok := p.pendings[ip]
+	if !ok {
+		log.WithField("IP", ip).Warn("Not exists in the pended list")
+		return false
 	}
 
 	w.InvokeeVersion = version
@@ -21,5 +27,5 @@ func (p *Pool) Grant(ip string, ta worker.TaskAssigner, version string) (ok bool
 		delete(p.pendings, ip)
 	}()
 
-	return
+	return true
 }

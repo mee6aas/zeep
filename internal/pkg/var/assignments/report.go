@@ -12,7 +12,6 @@ func Report(invkID string, rst interface{}) (ok bool) {
 
 	a.holder <- rst
 
-	close(a.holder)
 	delete(assignments, invkID)
 
 	return

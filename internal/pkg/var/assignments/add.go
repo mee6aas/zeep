@@ -26,7 +26,7 @@ func Add(addr string, username string) (invkID string, c chan interface{}) {
 		}
 	}
 
-	c = make(chan interface{})
+	c = make(chan interface{}, 1)
 	assignments[invkID] = assign{
 		id:       invkID,
 		assignee: username,

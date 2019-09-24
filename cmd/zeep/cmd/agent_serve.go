@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"os/exec"
 	"strconv"
 	"time"
 
@@ -99,6 +100,13 @@ var agentServeCmd = &cobra.Command{
 				cmd = []string{"--debug"}
 			}
 
+			agntDlgt, e := exec.LookPath("kyle-agent")
+			if e != nil {
+				log.Info("Agent delegat, kyle-agent, not found.\nServe agent without delegate feature.")
+			} else {
+				log.Debugf("Agent delegate found at %s\n", agntDlgt)
+			}
+
 			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 			res, e := client.ContainerCreate(ctx, &dockerCont.Config{
 				StopSignal: "SIGINT",
@@ -109,6 +117,7 @@ var agentServeCmd = &cobra.Command{
 					api.AgentNetworkEnvKey + "=" + optAgentNet,
 					api.AgentHostEnvKey + "=" + optAgentName,
 					api.AgentPortEnvKey + "=" + strconv.Itoa(api.AgentDefaultPort),
+					api.AgentDelegateHostPathEnvKey + "=" + agntDlgt,
 				},
 			}, &dockerCont.HostConfig{
 				Privileged:  true,

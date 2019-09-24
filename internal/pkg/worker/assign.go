@@ -15,6 +15,10 @@ func (w *Worker) Assign(ctx context.Context, task interface{}) (e error) {
 
 	w.isAssigned = true
 	e = w.taskAssigner.Assign(ctx, task)
+	if e != nil {
+		w.isAssigned = false
+		return
+	}
 
 	return
 }

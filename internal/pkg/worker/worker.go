@@ -76,10 +76,8 @@ func NewWorker(ctx context.Context, conf Config) (worker Worker, e error) {
 	// os.Mkdir(filepath.Join(sto.Path(), filepath.Base(api.WorkflowStorage)), 755)
 
 	if cont, e = container.NewContainer(ctx, container.Config{
-		Image:      conf.Image,
-		Storage:    sto.PathOnHost(),
-		Entrypoint: []string{"/bin/sh", "-c"},
-		Cmd:        []string{"[ -f " + api.RuntimeSetup + "] && " + api.RuntimeSetup + "; " + api.RuntimeSpawn},
+		Image:   conf.Image,
+		Storage: sto.PathOnHost(),
 	}); e != nil {
 		e = errors.Wrap(e, "Failed to create container")
 		return

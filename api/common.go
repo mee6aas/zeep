@@ -29,6 +29,13 @@ const (
 	// represents the port of the agent.
 	AgentPortEnvKey = "AGENT_PORT"
 
+	// AgentDelegate is the path of the executable that is agent delegate.
+	AgentDelegate = "/usr/bin/delegate"
+
+	// AgentDelegateHostPathEnvKey is the key of the environment variable
+	// represents the path of the agent delegate executable on host that will be bind to worker container.
+	AgentDelegateHostPathEnvKey = "AGENT_DELEGATE_HOST_PATH"
+
 	// RuntimeDirectory is the path of the direcotry that the runtime uses.
 	// This is not a host mounted storage. It should be included in the runtime image.
 	RuntimeDirectory = "/runtime"
