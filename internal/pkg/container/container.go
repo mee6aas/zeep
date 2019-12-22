@@ -31,6 +31,14 @@ type Container struct {
 	ip string // IP of container
 }
 
+func (c Container) Unpause() {
+	engineClient.ContainerUnpause(context.Background(), c.id)
+}
+
+func (c Container) Pause() {
+	engineClient.ContainerPause(context.Background(), c.id)
+}
+
 // ID returns the ID of this container.
 func (c Container) ID() string { return c.id }
 
@@ -54,7 +62,7 @@ func NewContainer(ctx context.Context, conf Config) (c Container, e error) {
 		},
 		Entrypoint: []string{"/bin/sh", "-c"},
 		Cmd: []string{
-			"[ -f " + api.RuntimeSetup + "] && " + api.RuntimeSetup + "; " + api.RuntimeSpawn,
+			"[ -f " + api.RuntimeSetup + " ] && " + api.RuntimeSetup + "; " + api.RuntimeSpawn,
 		},
 	}
 
@@ -70,11 +78,12 @@ func NewContainer(ctx context.Context, conf Config) (c Container, e error) {
 	}
 
 	if agentDlgt != "" {
-		cConf.Entrypoint = []string{api.AgentDelegate}
-		cConf.Cmd = []string{}
+		cConf.Cmd = []string{
+			"[ -f " + api.RuntimeSetup + " ] && " + api.RuntimeSetup + "; " + api.AgentDelegate,
+		}
 
 		if log.GetLevel() == log.DebugLevel {
-			cConf.Cmd = append(cConf.Cmd, "--debug")
+			cConf.Cmd[0] = cConf.Cmd[0] + " --debug"
 		}
 
 		mnts = append(mnts, dockerMnt.Mount{

@@ -1,8 +1,8 @@
 package handover
 
 var (
-	//			 IP		not used
-	reserved map[string]bool
+	//					IP	   not used
+	reserved = make(map[string]bool)
 )
 
 // IsReserved checks if the specified address is being handovered.

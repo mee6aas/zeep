@@ -29,9 +29,9 @@ func TestUnmarshalFromFile(t *testing.T) {
 
 	{
 		const testActivity = "./testdata/withDeps.json"
-		var expectedDpes = []activity.Descriptor{
-			activity.Descriptor{Name: "meeseeks1"},
-			activity.Descriptor{Name: "meeseeks2"},
+		var expectedDpes = map[string]activity.Dep{
+			"meeseeks1": activity.Dep{},
+			"meeseeks2": activity.Dep{Outflow: "optional"},
 		}
 
 		a, e := activity.UnmarshalFromFile(testActivity)
