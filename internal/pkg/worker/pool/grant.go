@@ -14,6 +14,7 @@ func (p *Pool) Grant(ip string, ta worker.TaskAssigner, version string) bool {
 
 	w, ok := p.pendings[ip]
 	if !ok {
+		// It is normal during the handover procedure.
 		log.WithField("IP", ip).Warn("Not exists in the pended list")
 		return false
 	}
@@ -25,6 +26,7 @@ func (p *Pool) Grant(ip string, ta worker.TaskAssigner, version string) bool {
 		img := w.Image()
 		p.granted[img] <- w
 		delete(p.pendings, ip)
+		log.WithField("IP", ip).Info("Worker granted")
 	}()
 
 	return true
